@@ -1,0 +1,34 @@
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\le\Hero Motion Profile Example.exe
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\be\Hero Motion Profile Example.exe
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\le\Hero Motion Profile Example.pdb
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\be\Hero Motion Profile Example.pdb
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\Hero Motion Profile Example.exe
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\Hero Motion Profile Example.pdb
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\le\Hero Motion Profile Example.pe
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\le\Hero Motion Profile Example.pdbx
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\be\Hero Motion Profile Example.pe
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\be\Hero Motion Profile Example.pdbx
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\HERO Motion Profile Example2.csproj.AssemblyReference.cache
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\TinyCLR_DebugReferences.cache
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\HERO Motion Profile Example2.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\Hero Motion Profile Example.exe
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\Hero Motion Profile Example.pdb
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\be\Hero Motion Profile Example.pe
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\be\Hero Motion Profile Example.pdbx
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\le\Hero Motion Profile Example.pe
+C:\Users\User\source\repos\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\le\Hero Motion Profile Example.pdbx
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\HERO Motion Profile Example2.csproj.AssemblyReference.cache
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\TinyCLR_DebugReferences.cache
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\HERO Motion Profile Example2.csproj.CoreCompileInputs.cache
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\le\BOARDS Launch Acceleration Simulation Tool.exe
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\be\BOARDS Launch Acceleration Simulation Tool.exe
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\le\BOARDS Launch Acceleration Simulation Tool.pdb
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\be\BOARDS Launch Acceleration Simulation Tool.pdb
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\BOARDS Launch Acceleration Simulation Tool.exe
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\BOARDS Launch Acceleration Simulation Tool.pdb
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\le\BOARDS Launch Acceleration Simulation Tool.pe
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\le\BOARDS Launch Acceleration Simulation Tool.pdbx
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\be\BOARDS Launch Acceleration Simulation Tool.pe
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\bin\Debug\be\BOARDS Launch Acceleration Simulation Tool.pdbx
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\BOARDS Launch Acceleration Simulation Tool.exe
+C:\Users\viola\Desktop\BLAST Software Package\Provided Code\HERO Motion Profile Example2\HERO Motion Profile Example2\obj\Debug\BOARDS Launch Acceleration Simulation Tool.pdb
