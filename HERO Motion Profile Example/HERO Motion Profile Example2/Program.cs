@@ -22,62 +22,62 @@ using Microsoft.SPOT.Hardware;
 using System.Text;
 using System.Threading;
 
-namespace Hero_Motion_Profile_Example
+namespace HERO_Motion_Profile_Example
 {
-//    /** CSV Import */
-//    public class Import
-//    {
-//        public object Filepath
-//        {
-//            get
-//            {
-//                return Filepath;
-//            }
-//            set
-//            {
-//                Filepath = @"C:\Users\viola\Desktop\BLAST Software Package\MATLAB Script + Acceleration Data\REV_012722\Processed_Profile.csv";
-//            }
-//        }
+    //    /** CSV Import */
+    //    public class Import
+    //    {
+    //        public object Filepath
+    //        {
+    //            get
+    //            {
+    //                return Filepath;
+    //            }
+    //            set
+    //            {
+    //                Filepath = @"C:\Users\viola\Desktop\BLAST Software Package\MATLAB Script + Acceleration Data\REV_012722\Processed_Profile.csv";
+    //            }
+    //        }
 
-//        public double Time { get; set; }
-//        public double Velocity { get; set; }
-//        public bool IsBraking { get; set; }
+    //        public double Time { get; set; }
+    //        public double Velocity { get; set; }
+    //        public bool IsBraking { get; set; }
 
-//        //NearlyGenericArrayList inputProfile = new NearlyGenericArrayList(typeof(Step));
-
-
-//        //StringBuilder _motionProfile = new StringBuilder();
-        
+    //        //NearlyGenericArrayList inputProfile = new NearlyGenericArrayList(typeof(Step));
 
 
+    //        //StringBuilder _motionProfile = new StringBuilder();
 
-//        //Console.WriteLine(filepath);
 
-//        //var reader = new StreamReader(filepath); /** problematic */
-//        //var steps = new List<Step>(); /** problematic */
-//        //while (!reader.EndOfStream)
-//        //{
-//        //    var line = reader.ReadLine();
-//        //    var values = line.Split(',');
 
-//        //    steps.Add(new Step
-//        //    {
-//        //        Time = Convert.ToDouble(values[0]),
-//        //        Velocity = Convert.ToDouble(values[1]),
-//        //        IsBraking = values[2] == "1",
-//        //    });
-//        //}
 
-//        //foreach (var step in steps)
-//        //{
-//        //    Console.WriteLine($"Time-{step.Time},Velocity-{step.Velocity},IsBraking-{step.IsBraking}");
-//        //}
+    //        //Console.WriteLine(filepath);
 
-//        //Console.WriteLine($"{steps.Count()}");
+    //        //var reader = new StreamReader(filepath); /** problematic */
+    //        //var steps = new List<Step>(); /** problematic */
+    //        //while (!reader.EndOfStream)
+    //        //{
+    //        //    var line = reader.ReadLine();
+    //        //    var values = line.Split(',');
 
-//        //}
+    //        //    steps.Add(new Step
+    //        //    {
+    //        //        Time = Convert.ToDouble(values[0]),
+    //        //        Velocity = Convert.ToDouble(values[1]),
+    //        //        IsBraking = values[2] == "1",
+    //        //    });
+    //        //}
 
-//    }
+    //        //foreach (var step in steps)
+    //        //{
+    //        //    Console.WriteLine($"Time-{step.Time},Velocity-{step.Velocity},IsBraking-{step.IsBraking}");
+    //        //}
+
+    //        //Console.WriteLine($"{steps.Count()}");
+
+    //        //}
+
+    //    }
 
     public class Program
     {
@@ -89,7 +89,7 @@ namespace Hero_Motion_Profile_Example
             while (true)
             {
                 //will always run immediately
-                _robotApp.Run(); 
+                _robotApp.Run();
             }
         }
 
@@ -98,7 +98,7 @@ namespace Hero_Motion_Profile_Example
     /** The custom robot application */
 
     public class RobotApplication
-    { 
+    {
         TalonFX _talon = new TalonFX(0);
         bool[] _btns = new bool[10];
         bool[] _btnsLast = new bool[10];
@@ -115,13 +115,13 @@ namespace Hero_Motion_Profile_Example
         public void Run()
         {
             //_talon.SetControlMode(TalonFX.ControlMode.kVoltage);
-                       
+
             /**define feedback device (CTRE Magnetic Encoder, Absolute Pos. Indexing)*/
             _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0);
-            
+
             /**set encoder direction*/
             _talon.SetSensorPhase(true);
-            
+
             /**reset sensor position*/
             _talon.SetSelectedSensorPosition(0);
 
@@ -139,10 +139,10 @@ namespace Hero_Motion_Profile_Example
             _talon.ConfigMotionProfileTrajectoryPeriod(0, 50);
 
             /**set GPIO pins and states*/
-          
+
             //digitalOutKey.Write(true); //sets Output to Logic High
 
-            InputPort digitalInKey = new InputPort(CTRE.HERO.IO.Port5.Pin4,false,Port.ResistorMode.PullDown);
+            InputPort digitalInKey = new InputPort(CTRE.HERO.IO.Port5.Pin4, false, Port.ResistorMode.PullDown);
             //OutputPort digitalOutKey = new OutputPort(CTRE.HERO.IO.Port5.Pin4,false);
 
             bool Ready = false;
@@ -155,7 +155,7 @@ namespace Hero_Motion_Profile_Example
                 //_sb.Append(Ready);
                 //Debug.Print(_sb.ToString());
 
-                Ready = digitalInKey.Read();          
+                Ready = digitalInKey.Read();
 
                 if (Ready)
                 {
@@ -163,26 +163,26 @@ namespace Hero_Motion_Profile_Example
                 }
             }
 
-          //  StopBraking();
+            //  StopBraking();
             /* loop forever */
             while (true)
             {
-              _talon.GetMotionProfileStatus(_motionProfileStatus);
+                _talon.GetMotionProfileStatus(_motionProfileStatus);
 
                 bool step = _motionProfileStatus.isLast;
-                
+
                 //int step = _motionProfileStatus.timeDurMs;
-                
+
                 /** Printing status for debug*/
                 //_watchSB.Clear();
                 //_watchSB.Append(step);
                 //Debug.Print(_watchSB.ToString());
-                
-                _talon.GetActiveTrajectoryPosition(); 
-                
+
+                _talon.GetActiveTrajectoryPosition();
+
                 Drive();
-                 
-              //  ConfigureBrake( );
+
+                //  ConfigureBrake( );
 
                 CTRE.Phoenix.Watchdog.Feed();
 
@@ -194,26 +194,26 @@ namespace Hero_Motion_Profile_Example
 
         void Drive()
         {
-            
+
             _talon.ProcessMotionProfileBuffer();
 
             /* configure the motion profile once */
             if (!oneshot)
             {
-               // StopBraking();//before starting, stop braking
+                // StopBraking();//before starting, stop braking
                 /* disable MP to clear IsLast */
                 _talon.Set(ControlMode.MotionProfile, 0);
                 CTRE.Phoenix.Watchdog.Feed();
                 Thread.Sleep(10);
-                
+
                 /* buffer new pts in HERO */
                 TrajectoryPoint point = new TrajectoryPoint();
                 _talon.ClearMotionProfileHasUnderrun();
                 _talon.ClearMotionProfileTrajectories();
                 for (uint i = 0; i < HERO_Motion_Profile_Example.MotionProfile.kNumPoints; ++i)
                 {
-                    point.position = (float)HERO_Motion_Profile_Example.MotionProfile.Points[i][0] * kTicksPerRotation; //convert  from rotations to sensor units
-                    point.velocity = (float)HERO_Motion_Profile_Example.MotionProfile.Points[i][1] * kTicksPerRotation / 600;  //convert from RPM to sensor units per 100 ms 
+                    point.position = (float)HERO_Motion_Profile_Example.MotionProfile.PointsPosition[i] * kTicksPerRotation; //convert  from rotations to sensor units
+                    point.velocity = (float)HERO_Motion_Profile_Example.MotionProfile.PointsVelocity[i] * kTicksPerRotation / 600;  //convert from RPM to sensor units per 100 ms 
                     point.headingDeg = 0; //not used in this example
                     point.isLastPoint = (i + 1 == HERO_Motion_Profile_Example.MotionProfile.kNumPoints) ? true : false;
                     point.zeroPos = (i == 0) ? true : false;
@@ -222,7 +222,7 @@ namespace Hero_Motion_Profile_Example
                     point.timeDur = TrajectoryPoint.TrajectoryDuration.TrajectoryDuration_10ms;
                     _talon.PushMotionProfileTrajectory(point);
                 }
-                
+
                 /* send the first few pts to Talon */
                 for (int i = 0; i < 5; ++i)
                 //for (uint i = 0; i < MotionProfile.kNumPoints; ++i)
@@ -255,7 +255,7 @@ namespace Hero_Motion_Profile_Example
                 _sb.Append("VelOnly\t");
                 _sb.Append(" TargetPos[AndVelocity] \t");
                 _sb.Append("Pos[AndVelocity]");
-               // Debug.Print(_sb.ToString());
+                // Debug.Print(_sb.ToString());
             }
 
             if (--_timeToPrint <= 0)
@@ -289,18 +289,18 @@ namespace Hero_Motion_Profile_Example
                 _sb.Append("\t\t\t\t");
                 _sb.Append(_talon.GetClosedLoopError());
 
-               // Debug.Print(_sb.ToString());
+                // Debug.Print(_sb.ToString());
             }
         }
 
         public void ConfigureBrake()
         {
-            int target =   _talon.GetClosedLoopTarget(); 
+            int target = _talon.GetClosedLoopTarget();
 
             Debug.Print(target.ToString() + " is the target");
 
             return;
-             
+
         }
 
         /*

@@ -23,11 +23,11 @@ G = 60;                 % gear reduction ratio G:1
     end
 % file = "D:\1 School\2 Projects\Blast\Matlab_Preprocessing\Data.csv";
 Data = importdata(file);
-% t = Data(:,1);
-% v = Data(:,2)/60; % in terms of rotations/second, NOT RPM
+t = Data(:,1);
+v = Data(:,2); % in terms of rotations/second, NOT RPM
 
 %% Dummy vector creation - DELETE
-t = [0 1 2]; v = [0 60 60];
+% t = [0 1 2]; v = [0 60 60];
 
 %% ---------- Time & Velocity Processing ---------- %%
 %% Interpolate Data for motor
