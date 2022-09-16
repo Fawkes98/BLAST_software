@@ -108,6 +108,8 @@ namespace HERO_Motion_Profile_Example
         int _timeToColumns = 0;
         const int kTicksPerRotation = 4096;
         bool oneshot = false;
+        bool[] brakeFlag = new bool[HERO_Motion_Profile_Example.MotionProfile.kNumPoints];
+
 
         MotionProfileStatus _motionProfileStatus = new MotionProfileStatus();
         //MotionProfileStatus _trajectoryPos = new MotionProfileStatus();
@@ -200,6 +202,7 @@ namespace HERO_Motion_Profile_Example
             /* configure the motion profile once */
             if (!oneshot)
             {
+                Debug.Print("Initializing Motion Profile - BLAST Lab");
                 // StopBraking();//before starting, stop braking
                 /* disable MP to clear IsLast */
                 _talon.Set(ControlMode.MotionProfile, 0);
@@ -212,8 +215,8 @@ namespace HERO_Motion_Profile_Example
                 _talon.ClearMotionProfileTrajectories();
                 for (uint i = 0; i < HERO_Motion_Profile_Example.MotionProfile.kNumPoints; ++i)
                 {
-                    point.position = (float)HERO_Motion_Profile_Example.MotionProfile.PointsPosition[i] * kTicksPerRotation; //convert  from rotations to sensor units
-                    point.velocity = (float)HERO_Motion_Profile_Example.MotionProfile.PointsVelocity[i] * kTicksPerRotation / 600;  //convert from RPM to sensor units per 100 ms 
+                    point.position = (float)HERO_Motion_Profile_Example.MotionProfile.PointsPosition[i] * (float)kTicksPerRotation; //convert  from rotations to sensor units
+                    point.velocity = (float)HERO_Motion_Profile_Example.MotionProfile.PointsVelocity[i] * (float)kTicksPerRotation / 600.0;  //convert from RPM to sensor units per 100 ms 
                     point.headingDeg = 0; //not used in this example
                     point.isLastPoint = (i + 1 == HERO_Motion_Profile_Example.MotionProfile.kNumPoints) ? true : false;
                     point.zeroPos = (i == 0) ? true : false;
@@ -236,7 +239,9 @@ namespace HERO_Motion_Profile_Example
                 _talon.Set(ControlMode.MotionProfile, 1);
 
                 oneshot = true;
+                
             }
+            //Debug.Print("Falcon CUR:"+ _talon.GetOutputCurrent() + "\tFalcon VEL:"+ _talon.GetSelectedSensorVelocity() + "\tFalcon POS:" + _talon.GetSelectedSensorPosition());
         }
 
         void Instrument()
@@ -252,10 +257,11 @@ namespace HERO_Motion_Profile_Example
                 _sb.Append("IsUnder\t");
                 _sb.Append(" IsVal \t");
                 _sb.Append(" IsLast\t");
-                _sb.Append("VelOnly\t");
+                //_sb.Append("VelOnly\t");
                 _sb.Append(" TargetPos[AndVelocity] \t");
-                _sb.Append("Pos[AndVelocity]");
-                // Debug.Print(_sb.ToString());
+                _sb.Append("Pos[AndVelocity]\t");
+                _sb.Append("ClosedLoopError");
+                Debug.Print(_sb.ToString());
             }
 
             if (--_timeToPrint <= 0)
@@ -275,21 +281,21 @@ namespace HERO_Motion_Profile_Example
 
                 _sb.Append(_motionProfileStatus.isLast ? "   1   \t" : "       \t");
 
-                _sb.Append(_talon.GetActiveTrajectoryPosition());
+                _sb.Append(_talon.GetActiveTrajectoryPosition(1) / 2048.0);
                 _sb.Append("[");
-                _sb.Append(_talon.GetActiveTrajectoryVelocity());
+                _sb.Append(_talon.GetActiveTrajectoryVelocity(1) / 2048.0);
                 _sb.Append("]\t");
 
 
                 _sb.Append("\t\t\t");
-                _sb.Append(_talon.GetSelectedSensorPosition(0));
+                _sb.Append(_talon.GetSelectedSensorPosition(1)/ 2048.0);
                 _sb.Append("[");
-                _sb.Append(_talon.GetSelectedSensorVelocity(0));
+                _sb.Append(_talon.GetSelectedSensorVelocity(1)/ 2048.0);
                 _sb.Append("]");
                 _sb.Append("\t\t\t\t");
                 _sb.Append(_talon.GetClosedLoopError());
 
-                // Debug.Print(_sb.ToString());
+                Debug.Print(_sb.ToString());
             }
         }
 

@@ -387,5 +387,9 @@ namespace HERO_Motion_Profile_Example
             0.2857142857    ,
             0
         };
+        public static bool[] BrakeFlag = new bool[]
+        {
+            false
+        };
     }
 }
