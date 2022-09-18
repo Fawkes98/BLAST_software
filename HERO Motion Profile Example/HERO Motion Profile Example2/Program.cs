@@ -110,6 +110,10 @@ namespace HERO_Motion_Profile_Example
         bool oneshot = false;
         bool[] brakeFlag = new bool[HERO_Motion_Profile_Example.MotionProfile.kNumPoints];
 
+        private GameController _gamepad = new GameController(UsbHostDevice.GetInstance());
+
+        OutputPort brakeSSR = new OutputPort(CTRE.HERO.IO.Port5.Pin5, false);
+        bool brakeToggle = false;
 
         MotionProfileStatus _motionProfileStatus = new MotionProfileStatus();
         //MotionProfileStatus _trajectoryPos = new MotionProfileStatus();
@@ -128,7 +132,7 @@ namespace HERO_Motion_Profile_Example
             _talon.SetSelectedSensorPosition(0);
 
             /**set motor control parameters*/
-            _talon.Config_kP(0, 0.80f);
+            _talon.Config_kP(0, 0f);
             _talon.Config_kI(0, 0f);
             _talon.Config_kD(0, 0f);
             _talon.Config_kF(0, 0.09724488664269079041176191004297f);
@@ -242,13 +246,14 @@ namespace HERO_Motion_Profile_Example
                 
             }
             //Debug.Print("Falcon CUR:"+ _talon.GetOutputCurrent() + "\tFalcon VEL:"+ _talon.GetSelectedSensorVelocity() + "\tFalcon POS:" + _talon.GetSelectedSensorPosition());
+            //Debug.Print("GamepadB0: " + _gamepad.GetButton(0));
         }
 
         void Instrument()
         {
             if (--_timeToColumns <= 0)
             {
-                _timeToColumns = 400;
+                _timeToColumns = 100;
                 _sb.Clear();
                 _sb.Append("topCnt \t");
                 _sb.Append("btmCnt \t");
@@ -261,12 +266,14 @@ namespace HERO_Motion_Profile_Example
                 _sb.Append(" TargetPos[AndVelocity] \t");
                 _sb.Append("Pos[AndVelocity]\t");
                 _sb.Append("ClosedLoopError");
-                Debug.Print(_sb.ToString());
+                // Debug.Print(_sb.ToString());
+                brakeToggle = !brakeToggle;
+                brakeSSR.Write(brakeToggle);
             }
 
             if (--_timeToPrint <= 0)
             {
-                _timeToPrint = 40;
+                _timeToPrint = 10;
 
                 _sb.Clear();
                 _sb.Append(_motionProfileStatus.topBufferCnt);
@@ -295,7 +302,7 @@ namespace HERO_Motion_Profile_Example
                 _sb.Append("\t\t\t\t");
                 _sb.Append(_talon.GetClosedLoopError());
 
-                Debug.Print(_sb.ToString());
+                // Debug.Print(_sb.ToString());
             }
         }
 
@@ -309,18 +316,23 @@ namespace HERO_Motion_Profile_Example
 
         }
 
-        /*
+        
         public void StartBraking()
         {
             Debug.Print("HALT");
             //here's where we actually cause the braking to occur
+
+            //brakeSSR.Write(true); WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
         }
 
         public void StopBraking()
         {
             Debug.Print("DO NOT HALT");
             //here's where we remove the brake;
+
+            //brakeSSR.Write(false); WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
         }
-        */
+
+
     }
 }
