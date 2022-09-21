@@ -42,5 +42,3 @@ Also remember to find out how to change the letter of a pin.
 ```
 For Zach to fill in.
 ```
-
-
