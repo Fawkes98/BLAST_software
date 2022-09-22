@@ -48,7 +48,17 @@ Brake
 - implemented brake physically
   - learned how to affix properly
 
-### Tuesday 9/20/2022
+# Monday 9/19/2022
+
+### Software - Anshal
+
+Had nothing to work on, as the motor was broken, so didn't come in today.
+
+### Hardware - Zach
+
+Met with Maziar, defined problem statement for CREATE, and did 3D print work 
+
+# Tuesday 9/20/2022
 
 ### Software - Anshal
 
