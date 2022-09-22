@@ -43,4 +43,14 @@ Also remember to find out how to change the letter of a pin.
 For Zach to fill in.
 ```
 
+### Monday 9/20/2022
 
+### Software - Anshal
+
+Had nothing to work on, as the motor was broken, so didn't come in today.
+
+### Hardware - Zachary
+
+```
+For Zach to fill in.
+```
