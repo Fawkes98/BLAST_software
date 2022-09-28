@@ -99,6 +99,8 @@ namespace HERO_Motion_Profile_Example
 
     public class RobotApplication
     {
+        double[] PID = new double[] { 0.8, 0, 0.02 };
+
         TalonFX _talon = new TalonFX(0);
         bool[] _btns = new bool[10];
         bool[] _btnsLast = new bool[10];
@@ -122,19 +124,23 @@ namespace HERO_Motion_Profile_Example
         {
             //_talon.SetControlMode(TalonFX.ControlMode.kVoltage);
 
+            _talon.ConfigFactoryDefault();
+            
             /**define feedback device (CTRE Magnetic Encoder, Absolute Pos. Indexing)*/
             _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0);
-
-            /**set encoder direction*/
+            
+            
+            
+            //set encoder direction
             _talon.SetSensorPhase(true);
 
-            /**reset sensor position*/
+            //reset sensor position
             _talon.SetSelectedSensorPosition(0);
 
-            /**set motor control parameters*/
-            _talon.Config_kP(0, 0f);
+            //*set motor control parameters
+            _talon.Config_kP(0, 1f);
             _talon.Config_kI(0, 0f);
-            _talon.Config_kD(0, 0f);
+            _talon.Config_kD(0, 0.02f);
             _talon.Config_kF(0, 0.09724488664269079041176191004297f);
             _talon.SelectProfileSlot(0, 0);
             _talon.ConfigNominalOutputForward(0f, 50);
@@ -143,8 +149,8 @@ namespace HERO_Motion_Profile_Example
             _talon.ConfigPeakOutputReverse(-1.0f, 50);
             _talon.ChangeMotionControlFramePeriod(5);
             _talon.ConfigMotionProfileTrajectoryPeriod(0, 50);
-
-            /**set GPIO pins and states*/
+            
+            //set GPIO pins and states
 
             //digitalOutKey.Write(true); //sets Output to Logic High
 
@@ -247,6 +253,7 @@ namespace HERO_Motion_Profile_Example
             }
             //Debug.Print("Falcon CUR:"+ _talon.GetOutputCurrent() + "\tFalcon VEL:"+ _talon.GetSelectedSensorVelocity() + "\tFalcon POS:" + _talon.GetSelectedSensorPosition());
             //Debug.Print("GamepadB0: " + _gamepad.GetButton(0));
+            Debug.Print("" + _talon.GetActiveTrajectoryVelocity(1) + ", " + _talon.GetSelectedSensorVelocity(1));
         }
 
         void Instrument()
@@ -266,7 +273,7 @@ namespace HERO_Motion_Profile_Example
                 _sb.Append(" TargetPos[AndVelocity] \t");
                 _sb.Append("Pos[AndVelocity]\t");
                 _sb.Append("ClosedLoopError");
-                // Debug.Print(_sb.ToString());
+                //Debug.Print(_sb.ToString());
                 brakeToggle = !brakeToggle;
                 brakeSSR.Write(brakeToggle);
             }
@@ -288,21 +295,21 @@ namespace HERO_Motion_Profile_Example
 
                 _sb.Append(_motionProfileStatus.isLast ? "   1   \t" : "       \t");
 
-                _sb.Append(_talon.GetActiveTrajectoryPosition(1) / 2048.0);
+                _sb.Append(_talon.GetActiveTrajectoryPosition(1) / 4096.0);
                 _sb.Append("[");
-                _sb.Append(_talon.GetActiveTrajectoryVelocity(1) / 2048.0);
+                _sb.Append(_talon.GetActiveTrajectoryVelocity(1) / 4096.0);
                 _sb.Append("]\t");
 
 
                 _sb.Append("\t\t\t");
-                _sb.Append(_talon.GetSelectedSensorPosition(1)/ 2048.0);
+                _sb.Append(_talon.GetSelectedSensorPosition(1)/ 4096.0);
                 _sb.Append("[");
-                _sb.Append(_talon.GetSelectedSensorVelocity(1)/ 2048.0);
+                _sb.Append(_talon.GetSelectedSensorVelocity(1)/ 4096.0);
                 _sb.Append("]");
                 _sb.Append("\t\t\t\t");
                 _sb.Append(_talon.GetClosedLoopError());
 
-                // Debug.Print(_sb.ToString());
+                //Debug.Print(_sb.ToString());
             }
         }
 
@@ -322,7 +329,7 @@ namespace HERO_Motion_Profile_Example
             Debug.Print("HALT");
             //here's where we actually cause the braking to occur
 
-            //brakeSSR.Write(true); WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
+            //brakeSSR.Write(false); WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
         }
 
         public void StopBraking()
@@ -330,7 +337,7 @@ namespace HERO_Motion_Profile_Example
             Debug.Print("DO NOT HALT");
             //here's where we remove the brake;
 
-            //brakeSSR.Write(false); WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
+            //brakeSSR.Write(true); WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
         }
 
 
