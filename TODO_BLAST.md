@@ -10,6 +10,8 @@
 
 - Set up ENUMS for the ports so you can just do FY.5 to get the brake pin
 
+- Get rid of CAN frame not received error.
+
 ### Hardware:
 
-- Fix motor so can be PID tested.
+- ~~Fix motor so can be PID tested.~~

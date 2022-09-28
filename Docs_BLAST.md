@@ -15,6 +15,16 @@ https://store.ctr-electronics.com/content/api/cpp/html/classctre_1_1phoenix_1_1m
 
 #### CTRE Pheonix Code Examples:
 
-GET FROM LAB COMPUTER
+https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/tree/master/HERO%20C%23
+
+#### Regex Codes:
+
+###### Remove Error Tags:
+
+`Error -3 HERO Talon FX 0: CAN frame not received\/too-stale\.\n\n`
+
+###### Format into good
+
+`([0-9]*), ([0-9]*)\n`
 
 ## Hardware:

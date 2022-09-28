@@ -127,7 +127,7 @@ namespace HERO_Motion_Profile_Example
             _talon.ConfigFactoryDefault();
             
             /**define feedback device (CTRE Magnetic Encoder, Absolute Pos. Indexing)*/
-            _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0);
+            //_talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 1);
             
             
             
@@ -137,11 +137,13 @@ namespace HERO_Motion_Profile_Example
             //reset sensor position
             _talon.SetSelectedSensorPosition(0);
 
-            //*set motor control parameters
+            //set motor control parameters
+            
             _talon.Config_kP(0, 1f);
             _talon.Config_kI(0, 0f);
             _talon.Config_kD(0, 0.02f);
             _talon.Config_kF(0, 0.09724488664269079041176191004297f);
+            
             _talon.SelectProfileSlot(0, 0);
             _talon.ConfigNominalOutputForward(0f, 50);
             _talon.ConfigNominalOutputReverse(0f, 50);

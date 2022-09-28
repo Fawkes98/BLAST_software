@@ -14,6 +14,7 @@ Debugging with print statements is done with
 ### Hardware - Zachary
 
 Pulled apart motor & diagnosis of damage
+
 - damage induced due to "floating input" issue & overnight event
   - motor was left on, attached to arm, spinning at 120RPM, likely for multiple days
 - motor left on, causing aluminum toothed hex shaft to be chewed through & destroyed
@@ -41,10 +42,12 @@ Also remember to find out how to change the letter of a pin.
 ### Hardware - Zachary
 
 Development of CREATE project
+
 - printing and model development
   - created new base plate, adding fixtures for sling
 
 Brake
+
 - implemented brake physically
   - learned how to affix properly
 
@@ -67,7 +70,9 @@ Had nothing to work on, as the motor was broken, so didn't come in today.
 ### Hardware - Zachary
 
 Met with CREATE team and developed next steps for both HS outreach, as well as MAE150 project steps
+
 - CREATE 
+  
   - 2 phase design process
     1. Students in classroom build marshmallow bridges to learn about statics & design process.
     - sub goal of developing intuitive understanding of stress
@@ -79,8 +84,24 @@ Met with CREATE team and developed next steps for both HS outreach, as well as M
       - teach CAD (TinkerCAD) & 3D printing, along with itterative design, kinematics, gravity, etc
 
 - Next Steps: 
+  
   1. follow up with Tali for cirriculum redesign so we can match & cater project
   2. Get access to TinkerCAD to learn how to better teach
   3. Get access to 3D printer specs & software
 
+# Wednesday 9/28/2022
 
+### Software - Anshal
+
+Motor was fixed today, so I came in to tune pids. 
+
+Defaults work badly, but definitely faster than the 1,0,0.02. We need to get controller to do solid PID tuning, so until then just messing around with Matlab tuning has been enlightening but as of yet, no results.
+
+It seems that initializing the sensor causes wierd errors:
+`_talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 1);`
+
+That was removed, and since then its been working better.
+
+Still need to fix that stupid CAN frame not received error. It barely actually sends frames, but I remember it not doing this a few weeks ago. Wierd.
+
+Note to bring in custom arduino controller in, potentially uses D-input.
