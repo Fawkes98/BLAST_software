@@ -100,6 +100,8 @@ Defaults work badly, but definitely faster than the 1,0,0.02. We need to get con
 It seems that initializing the sensor causes wierd errors:
 `_talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 1);`
 
+Initially that parameter was 0, and when it was 0 it just straight up didn't stop. Changing it to 1 made it stop, and removing it has done the same.
+
 That was removed, and since then its been working better.
 
 Still need to fix that stupid CAN frame not received error. It barely actually sends frames, but I remember it not doing this a few weeks ago. Wierd.
