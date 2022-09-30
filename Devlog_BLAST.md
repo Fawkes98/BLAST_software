@@ -107,3 +107,35 @@ That was removed, and since then its been working better.
 Still need to fix that stupid CAN frame not received error. It barely actually sends frames, but I remember it not doing this a few weeks ago. Wierd.
 
 Note to bring in custom arduino controller in, potentially uses D-input.
+
+### Hardware - Zachary
+
+```
+For Zach to fill in
+```
+
+
+
+# Friday 9/30/2022
+
+### Software - Anshal
+
+Motor started out today fixed, ran some simple profiles, and it seems to be trying to stop again, which is good, but the errors are still coming in, which is bad
+
+On a terrible note, I was a bit too late to hit the stop on one of the runs and heard something of a snap, and now the motor kinda just grinds.
+
+On a separate note, it doesn't seem like the preprocessor directives are working with multiple profiles, need to test that again
+
+Since motor was broken, wrote all of the PID tuner code, given that the arduino controller works. Note: it actually uses xinput, but theres a way to use xinput with the HERO, so that works.
+
+Need to add an automatic rule that if the motor is decceling it just sets pid to 0,0,0,0
+
+Also need to see if it is possible to increase the rate at which frames are given from the FX, it seems we're still getting garbage response.
+
+Macro for FY, AUSX, etc. didn't work.
+
+### Hardware - Zachary
+
+```
+For Zachary to fill out.s
+```
