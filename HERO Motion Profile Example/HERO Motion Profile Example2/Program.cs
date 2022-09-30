@@ -10,6 +10,16 @@
 /*PREVIOUSLY
  /** Example demonstrating the motion profile control mode of Talon SRX.
  */
+
+/*#define AUSX CTRE.HERO.IO.Port1
+#define Z1 CTRE.HERO.IO.Port2
+#define PY CTRE.HERO.IO.Port3
+#define IKUX CTRE.HERO.IO.Port4
+#define FY CTRE.HERO.IO.Port5
+#define IUX CTRE.HERO.IO.Port6
+#define Z2 CTRE.HERO.IO.Port7
+#define ADSX CTRE.HERO.IO.Port8
+*/
 using CTRE.Phoenix;
 using CTRE.Phoenix.Controller;
 using CTRE.Phoenix.Motion;
@@ -21,6 +31,8 @@ using Microsoft.SPOT.Hardware;
 //using System.IO;
 using System.Text;
 using System.Threading;
+
+
 
 namespace HERO_Motion_Profile_Example
 {
