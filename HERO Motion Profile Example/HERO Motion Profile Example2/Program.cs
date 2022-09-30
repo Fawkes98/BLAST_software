@@ -191,167 +191,81 @@ namespace HERO_Motion_Profile_Example
 
                 if (Ready)
                 {
-                    if (_gamepad.GetButton(1))
-                    {
-                        Debug.Print("BUTTON");
-                    }
+                    Thread.Sleep(1000);
                     break;
                 }
             }
 
             //  StopBraking();
             /* loop forever */
+            float konstantP = 1;
+            float konstantI = 0;
+            float konstantD = 0;
+            int mode = 0;
             while (true)
             {
-                _talon.GetMotionProfileStatus(_motionProfileStatus);
-
-                bool step = _motionProfileStatus.isLast;
-
-                //int step = _motionProfileStatus.timeDurMs;
-
-                /** Printing status for debug*/
-                //_watchSB.Clear();
-                //_watchSB.Append(step);
-                //Debug.Print(_watchSB.ToString());
-
-                _talon.GetActiveTrajectoryPosition();
-
-                Drive();
-
-                //  ConfigureBrake( );
-
                 CTRE.Phoenix.Watchdog.Feed();
+                Debug.Print("kP:" + konstantP + "kI:" + konstantI + "kD:" + konstantD);
 
-                Instrument();
+                _talon.Set(ControlMode.Velocity, _gamepad.GetAxis(3) * 0.3f);
 
+                _talon.Config_kP(0, konstantP);
+                _talon.Config_kI(0, konstantI);
+                _talon.Config_kD(0, konstantD);
+                float axis = _gamepad.GetAxis(1);
+                if(axis < 0.01 && axis > -0.01)
+                {
+                    axis = 0;
+                }
+                if(mode == 0)
+                {
+                    konstantP += axis * 0.01f;
+                }
+                else if(mode == 1)
+                {
+                    konstantI += axis * 0.0001f;
+                }
+                else if (mode == 2)
+                {
+                    konstantD += axis * 0.001f;
+                }
                 if (_gamepad.GetButton(1))
                 {
-                    Debug.Print("BUTTON");
+                    mode = 0;
+                    Debug.Print("------------------\n----- P MODE -----\n------------------");
+                }
+                else if (_gamepad.GetButton(2))
+                {
+                    mode = 1;
+                    Debug.Print("------------------\n----- I MODE -----\n------------------");
+                }
+                else if (_gamepad.GetButton(3))
+                {
+                    mode = 2;
+                    Debug.Print("------------------\n----- D MODE -----\n------------------");
                 }
 
+
+                if (digitalInKey.Read())
+                {
+                    _talon.Set(ControlMode.PercentOutput, 0);
+                    Thread.Sleep(1000);
+                    while (true)
+                    {
+                        bool resume = digitalInKey.Read();
+                        Debug.Print("Paused");
+                        _talon.Set(ControlMode.PercentOutput, 0);
+                        if (resume)
+                        {
+                            Debug.Print("Unpaused");
+                            Thread.Sleep(1000);
+                            break;
+                        }
+                    }
+                }
                 Thread.Sleep(5);
             }
         }
-
-        void Drive()
-        {
-
-            _talon.ProcessMotionProfileBuffer();
-
-            /* configure the motion profile once */
-            if (!oneshot)
-            {
-                Debug.Print("Initializing Motion Profile - BLAST Lab");
-                // StopBraking();//before starting, stop braking
-                /* disable MP to clear IsLast */
-                _talon.Set(ControlMode.MotionProfile, 0);
-                CTRE.Phoenix.Watchdog.Feed();
-                Thread.Sleep(10);
-
-                /* buffer new pts in HERO */
-                TrajectoryPoint point = new TrajectoryPoint();
-                _talon.ClearMotionProfileHasUnderrun();
-                _talon.ClearMotionProfileTrajectories();
-                for (uint i = 0; i < HERO_Motion_Profile_Example.MotionProfile.kNumPoints; ++i)
-                {
-                    point.position = (float)HERO_Motion_Profile_Example.MotionProfile.PointsPosition[i] * (float)kTicksPerRotation; //convert  from rotations to sensor units
-                    point.velocity = (float)HERO_Motion_Profile_Example.MotionProfile.PointsVelocity[i] * (float)kTicksPerRotation / 600.0;  //convert from RPM to sensor units per 100 ms 
-                    point.headingDeg = 0; //not used in this example
-                    point.isLastPoint = (i + 1 == HERO_Motion_Profile_Example.MotionProfile.kNumPoints) ? true : false;
-                    point.zeroPos = (i == 0) ? true : false;
-                    point.profileSlotSelect0 = 0;
-                    point.profileSlotSelect1 = 0; //not used in this example
-                    point.timeDur = TrajectoryPoint.TrajectoryDuration.TrajectoryDuration_10ms;
-                    _talon.PushMotionProfileTrajectory(point);
-                }
-
-                /* send the first few pts to Talon */
-                for (int i = 0; i < 5; ++i)
-                //for (uint i = 0; i < MotionProfile.kNumPoints; ++i)
-                {
-                    CTRE.Phoenix.Watchdog.Feed();
-                    Thread.Sleep(5);
-                    _talon.ProcessMotionProfileBuffer();
-                }
-
-                /*start MP */
-                _talon.Set(ControlMode.MotionProfile, 1);
-
-                oneshot = true;
-                
-            }
-            //Debug.Print("Falcon CUR:"+ _talon.GetOutputCurrent() + "\tFalcon VEL:"+ _talon.GetSelectedSensorVelocity() + "\tFalcon POS:" + _talon.GetSelectedSensorPosition());
-            //Debug.Print("GamepadB0: " + _gamepad.GetButton(0));
-            Debug.Print("" + _talon.GetActiveTrajectoryVelocity(1) + ", " + _talon.GetSelectedSensorVelocity(1));
-        }
-
-        void Instrument()
-        {
-            if (--_timeToColumns <= 0)
-            {
-                _timeToColumns = 100;
-                _sb.Clear();
-                _sb.Append("topCnt \t");
-                _sb.Append("btmCnt \t");
-                _sb.Append("setval \t");
-                _sb.Append("HasUndr\t");
-                _sb.Append("IsUnder\t");
-                _sb.Append(" IsVal \t");
-                _sb.Append(" IsLast\t");
-                //_sb.Append("VelOnly\t");
-                _sb.Append(" TargetPos[AndVelocity] \t");
-                _sb.Append("Pos[AndVelocity]\t");
-                _sb.Append("ClosedLoopError");
-                //Debug.Print(_sb.ToString());
-                brakeToggle = !brakeToggle;
-                //brakeSSR.Write(brakeToggle);
-            }
-
-            if (--_timeToPrint <= 0)
-            {
-                _timeToPrint = 10;
-
-                _sb.Clear();
-                _sb.Append(_motionProfileStatus.topBufferCnt);
-                _sb.Append("\t\t");
-                _sb.Append(_motionProfileStatus.btmBufferCnt);
-                _sb.Append("\t\t");
-                _sb.Append(_motionProfileStatus.outputEnable);
-                _sb.Append("\t\t");
-                _sb.Append(_motionProfileStatus.hasUnderrun ? "   1   \t" : "       \t");
-                _sb.Append(_motionProfileStatus.isUnderrun ? "   1   \t" : "       \t");
-                _sb.Append(_motionProfileStatus.activePointValid ? "   1   \t" : "       \t");
-
-                _sb.Append(_motionProfileStatus.isLast ? "   1   \t" : "       \t");
-
-                _sb.Append(_talon.GetActiveTrajectoryPosition(1) / 4096.0);
-                _sb.Append("[");
-                _sb.Append(_talon.GetActiveTrajectoryVelocity(1) / 4096.0);
-                _sb.Append("]\t");
-
-
-                _sb.Append("\t\t\t");
-                _sb.Append(_talon.GetSelectedSensorPosition(1)/ 4096.0);
-                _sb.Append("[");
-                _sb.Append(_talon.GetSelectedSensorVelocity(1)/ 4096.0);
-                _sb.Append("]");
-                _sb.Append("\t\t\t\t");
-                _sb.Append(_talon.GetClosedLoopError());
-
-                //Debug.Print(_sb.ToString());
-            }
-        }
-
-        public void ConfigureBrake()
-        {
-            int target = _talon.GetClosedLoopTarget();
-
-            Debug.Print(target.ToString() + " is the target");
-
-            return;
-
-        }
-
         
         public void StartBraking()
         {
