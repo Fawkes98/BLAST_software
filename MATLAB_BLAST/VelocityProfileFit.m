@@ -7,7 +7,7 @@ clear all; close all; clc;
 
 %% ------------ Script Parameters ------------ %%
 % constants
-dt = 0.01;              % (s) timestep of output data
+dt = 0.01; %10 milisec  % (s) timestep of output data
 G = 60;                 % gear reduction ratio G:1
 
 %% ------------ Input ------------ %%
@@ -73,6 +73,12 @@ for i = 2:length(t)
 end
 
 %% ------------ Output ------------ %%
+VFit_Out = [t' pos' v'];
+
+
+
+%% ---- old output ---- %%
+
 
 % data format = [time (s), postion (rotations), angular speed (RPM)]
 VFit_Out = [t' pos' v'];
@@ -98,14 +104,14 @@ VFit_Out = [t' pos' v'];
 header4 = sprintf('public const uint kNumPoints = %d;', length(VFit_Out));
 header5 = sprintf('public const uint kDurationMs = %2.0f;', dt*1000);
 
-headerArray = {'//  Position (rotations),   Velocity (RPM)';...
+headerArray = {'//  Position (rotations),   Velocity (RPM),   Brake (bool)';...
                'namespace HERO_Motion_Profile_Example {';...
                'public class MotionProfile {';
                header4;
                header5;
-               'public static double [][] Points = new double [][]{'};
+               'public static double[] PointsPosition = new double []{'};
 
-expFile = fopen('PositionProfile.txt','w');
+expFile = fopen('MotionProfile.txt','w');
 formatSpecHeader = '%s\n';
 for i = 1:length(headerArray)
     fprintf(expFile,formatSpecHeader,headerArray{i,:});
@@ -113,15 +119,26 @@ end
 
 
 % use fprintf to write line by line (for loop) into file based on above
+% --- now position specific values
     for i = 1:length(VFit_Out-1) 
-        fprintf(expFile,['new double[]{%2.9f, %2.9f    },' ...
-            '\n'], VFit_Out(i, 2), VFit_Out(i, 3)); %calling theta & omega sections of VFit_Out
+        fprintf(expFile,['%2.9f,\n'], VFit_Out(i, 2)); %calling theta sections of VFit_Out
     end
-% specific end point write condition
+% (intermediate) specific end point write condition 
     i = length(VFit_Out); 
-    fprintf(expFile,['new double[]{%2.9f, %2.9f    }' ...
-            '\n'], VFit_Out(i, 2), VFit_Out(i, 3));
-fprintf(expFile, '};}}'); %close 'Points'
+    fprintf(expFile,['%2.9f\n};\n\n' ...
+        'public static double[] PointsVelocity = newdouble[]{\n'], VFit_Out(i, 2));
+% use fprintf to write velocity part
+    for i = 1:length(VFit_Out-1) 
+        fprintf(expFile,['%2.9f,\n'], VFit_Out(i, 3)); %calling omega sections of VFit_Out
+    end
+
+% ---- no brake in velocity, created as false for ease ----
+% (intermediate) specific end point write condition 
+    i = length(VFit_Out); 
+    fprintf(expFile,['%2.9f\n};\n\n' ...
+        'public static bool[] BrakeFlag = newbool[]{' ...
+        '\nfalse\n};}}'], VFit_Out(i, 3));    
+    
 fclose(expFile); %close/ending writing to .txt
 
 
