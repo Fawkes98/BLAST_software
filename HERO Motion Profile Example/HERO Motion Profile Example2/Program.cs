@@ -112,7 +112,7 @@ namespace HERO_Motion_Profile_Example
         bool oneshot = false;
         bool[] brakeFlag = new bool[HERO_Motion_Profile_Example.MotionProfile.kNumPoints];
 
-        private GameController _gamepad = new GameController(UsbHostDevice.GetInstance());
+        private GameController _gamepad = new GameController(UsbHostDevice.GetInstance(0));
 
         OutputPort brakeSSR = new OutputPort(CTRE.HERO.IO.Port5.Pin5, false);
         bool brakeToggle = false;
@@ -122,12 +122,13 @@ namespace HERO_Motion_Profile_Example
 
         public void Run()
         {
+            UsbHostDevice.GetInstance(0).SetSelectableXInputFilter(UsbHostDevice.SelectableXInputFilter.XInputDevices);
             //_talon.SetControlMode(TalonFX.ControlMode.kVoltage);
 
             _talon.ConfigFactoryDefault();
             
             /**define feedback device (CTRE Magnetic Encoder, Absolute Pos. Indexing)*/
-            //_talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 1);
+            _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 1);
             
             
             
@@ -139,10 +140,10 @@ namespace HERO_Motion_Profile_Example
 
             //set motor control parameters
             
-            //_talon.Config_kP(0, 1f);
-            //_talon.Config_kI(0, 0f);
-            //_talon.Config_kD(0, 0.02f);
-            //_talon.Config_kF(0, 0.09724488664269079041176191004297f);
+            _talon.Config_kP(0, 0.8f);
+            _talon.Config_kI(0, 0f);
+            _talon.Config_kD(0, 0.0f);
+            _talon.Config_kF(0, 0.09724488664269079041176191004297f);
 
             //_talon.Config_kP(1, 0f);
             //_talon.Config_kI(1, 0f);
@@ -211,7 +212,7 @@ namespace HERO_Motion_Profile_Example
 
                 Instrument();
 
-                if (_gamepad.GetButton(0))
+                if (_gamepad.GetButton(1))
                 {
                     Debug.Print("BUTTON");
                 }
