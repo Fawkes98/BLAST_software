@@ -152,10 +152,10 @@ namespace HERO_Motion_Profile_Example
 
             //set motor control parameters
             
-            _talon.Config_kP(0, 0.8f);
-            _talon.Config_kI(0, 0f);
-            _talon.Config_kD(0, 0.0f);
-            _talon.Config_kF(0, 0.09724488664269079041176191004297f);
+            //_talon.Config_kP(0, 0.8f);
+            //_talon.Config_kI(0, 0f);
+            //_talon.Config_kD(0, 0.0f);
+            //_talon.Config_kF(0, 0.0f);
 
             //_talon.Config_kP(1, 0f);
             //_talon.Config_kI(1, 0f);
@@ -204,14 +204,20 @@ namespace HERO_Motion_Profile_Example
             int mode = 0;
             while (true)
             {
+                float lAxis = _gamepad.GetAxis(3);
+                if(lAxis < 0.01 && lAxis > -0.01)
+                {
+                    lAxis = 0;
+                }
                 CTRE.Phoenix.Watchdog.Feed();
-                Debug.Print("kP:" + konstantP + "kI:" + konstantI + "kD:" + konstantD);
+                Debug.Print("kP:" + konstantP + " | kI:" + konstantI + " | kD:" + konstantD + " | VAL:" + lAxis);
 
-                _talon.Set(ControlMode.Velocity, _gamepad.GetAxis(3) * 0.3f);
+                _talon.Set(ControlMode.Velocity, lAxis * 50f);
+                //_talon.Set(ControlMode.PercentOutput, _gamepad.GetAxis(3) * 0.3f);
 
-                _talon.Config_kP(0, konstantP);
-                _talon.Config_kI(0, konstantI);
-                _talon.Config_kD(0, konstantD);
+                //_talon.Config_kP(0, konstantP);
+                //_talon.Config_kI(0, konstantI);
+                //_talon.Config_kD(0, konstantD);
                 float axis = _gamepad.GetAxis(1);
                 if(axis < 0.01 && axis > -0.01)
                 {
@@ -246,13 +252,13 @@ namespace HERO_Motion_Profile_Example
                 }
 
 
-                if (digitalInKey.Read())
+                if (digitalInKey.Read() || _gamepad.GetButton(4))
                 {
                     _talon.Set(ControlMode.PercentOutput, 0);
                     Thread.Sleep(1000);
                     while (true)
                     {
-                        bool resume = digitalInKey.Read();
+                        bool resume = (digitalInKey.Read() || _gamepad.GetButton(4));
                         Debug.Print("Paused");
                         _talon.Set(ControlMode.PercentOutput, 0);
                         if (resume)
