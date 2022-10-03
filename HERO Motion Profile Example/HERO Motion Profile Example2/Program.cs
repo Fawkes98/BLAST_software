@@ -141,8 +141,8 @@ namespace HERO_Motion_Profile_Example
             
             /**define feedback device (CTRE Magnetic Encoder, Absolute Pos. Indexing)*/
             _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 1);
-            
-            
+
+            _talon.SetNeutralMode(NeutralMode.Coast);
             
             //set encoder direction
             _talon.SetSensorPhase(true);
@@ -282,7 +282,7 @@ namespace HERO_Motion_Profile_Example
             }
             //Debug.Print("Falcon CUR:"+ _talon.GetOutputCurrent() + "\tFalcon VEL:"+ _talon.GetSelectedSensorVelocity() + "\tFalcon POS:" + _talon.GetSelectedSensorPosition());
             //Debug.Print("GamepadB0: " + _gamepad.GetButton(0));
-            Debug.Print("" + _talon.GetActiveTrajectoryVelocity(1) + ", " + _talon.GetSelectedSensorVelocity(1));
+            //Debug.Print("" + _talon.GetActiveTrajectoryVelocity(1) + ", " + _talon.GetSelectedSensorVelocity(1));
         }
 
         void Instrument()
