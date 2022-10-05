@@ -114,8 +114,6 @@ Note to bring in custom arduino controller in, potentially uses D-input.
 For Zach to fill in
 ```
 
-
-
 # Friday 9/30/2022
 
 ### Software - Anshal
@@ -139,3 +137,11 @@ Macro for FY, AUSX, etc. didn't work.
 ```
 For Zachary to fill out.s
 ```
+
+# Monday 10/3/2022
+
+### Software - Anshal
+
+Started with fixing up some modes on PID Tuner, current pids are far too agressive with no load, but the controller broke midway
+
+Swapped over to working on motion profiling, since that was the main objective of today, figured out how to turn on Coast mode in code, other than that, little progress. Emailed support about the memory issue, since the 3001 point profile is too big, and our actual profile is 60k points, so thats an important issue that needs to be fixed.
