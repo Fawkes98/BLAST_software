@@ -101,15 +101,15 @@ VFit_Out = [t' pos' v'];
 %     new double[](x_kNumPoints, v_kNumPoints, b_kNumPoints    }};
 %     }}
 
-header4 = sprintf('public const uint kNumPoints = %d;', length(VFit_Out));
-header5 = sprintf('public const uint kDurationMs = %2.0f;', dt*1000);
+header4 = sprintf('\tpublic const uint kNumPoints = %d;', length(VFit_Out));
+header5 = sprintf('\tpublic const uint kDurationMs = %2.0f;', dt*1000);
 
 headerArray = {'//  Position (rotations),   Velocity (RPM),   Brake (bool)';...
-               'namespace HERO_Motion_Profile_Example {';...
-               'public class MotionProfile {';
+               '\tnamespace HERO_Motion_Profile_Example {';...
+               '\tpublic class MotionProfile {';
                header4;
                header5;
-               'public static double[] PointsPosition = new double[]{'};
+               '\tpublic static double[] PointsPosition = new double []{'};
 
 expFile = fopen('MotionProfile.txt','w');
 formatSpecHeader = '%s\n';
@@ -125,7 +125,7 @@ end
     end
 % (intermediate) specific end point write condition 
     i = length(VFit_Out); 
-    fprintf(expFile,['\t\t%2.9f\n\t};\n\n' ...
+    fprintf(expFile,['\t\t%2.9f\n};\n\n' ...
         '\tpublic static double[] PointsVelocity = new double[]{\n'], VFit_Out(i, 2));
 % use fprintf to write velocity part
     for i = 1:length(VFit_Out-1) 
@@ -135,9 +135,9 @@ end
 % ---- no brake in velocity, created as false for ease ----
 % (intermediate) specific end point write condition 
     i = length(VFit_Out); 
-    fprintf(expFile,['\t\t%2.9f\n\t};\n\n' ...
+    fprintf(expFile,['\t\t%2.9f\n};\n\n' ...
         '\tpublic static bool[] BrakeFlag = new bool[]{' ...
-        '\n\t\tfalse\n\t};\n}\n}'], VFit_Out(i, 3));    
+        '\nfalse\n};}}'], VFit_Out(i, 3));    
     
 fclose(expFile); %close/ending writing to .txt
 

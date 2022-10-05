@@ -124,6 +124,8 @@ namespace HERO_Motion_Profile_Example
         bool oneshot = false;
         bool[] brakeFlag = new bool[HERO_Motion_Profile_Example.MotionProfile.kNumPoints];
 
+        int cntPrint = 1;
+
         private GameController _gamepad = new GameController(UsbHostDevice.GetInstance(0));
 
         OutputPort brakeSSR = new OutputPort(CTRE.HERO.IO.Port5.Pin5, false);
@@ -140,7 +142,8 @@ namespace HERO_Motion_Profile_Example
             _talon.ConfigFactoryDefault();
             
             /**define feedback device (CTRE Magnetic Encoder, Absolute Pos. Indexing)*/
-            _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 1);
+            _talon.ConfigSelectedFeedbackSensor((FeedbackDevice)TalonFXFeedbackDevice.IntegratedSensor, 0);
+            _talon.ConfigIntegratedSensorInitializationStrategy(CTRE.Phoenix.Sensors.SensorInitializationStrategy.BootToZero, 50);
 
             _talon.SetNeutralMode(NeutralMode.Coast);
             
@@ -152,7 +155,7 @@ namespace HERO_Motion_Profile_Example
 
             //set motor control parameters
             
-            _talon.Config_kP(0, 0.8f);
+            _talon.Config_kP(0, 0.02f);
             _talon.Config_kI(0, 0f);
             _talon.Config_kD(0, 0.0f);
             _talon.Config_kF(0, 0.09724488664269079041176191004297f);
@@ -191,10 +194,6 @@ namespace HERO_Motion_Profile_Example
 
                 if (Ready)
                 {
-                    if (_gamepad.GetButton(1))
-                    {
-                        Debug.Print("BUTTON");
-                    }
                     break;
                 }
             }
@@ -230,6 +229,12 @@ namespace HERO_Motion_Profile_Example
                 }
 
                 Thread.Sleep(5);
+
+                if (--cntPrint <= 0)
+                {
+                    cntPrint = 5;
+                    Debug.Print("" + _talon.GetActiveTrajectoryVelocity(0) + ", " + _talon.GetSelectedSensorVelocity(0));
+                }
             }
         }
 
@@ -252,6 +257,7 @@ namespace HERO_Motion_Profile_Example
                 TrajectoryPoint point = new TrajectoryPoint();
                 _talon.ClearMotionProfileHasUnderrun();
                 _talon.ClearMotionProfileTrajectories();
+                _talon.ConfigSetParameter((CTRE.Phoenix.LowLevel.ParamEnum)121, 1, 0, 0);
                 for (uint i = 0; i < HERO_Motion_Profile_Example.MotionProfile.kNumPoints; ++i)
                 {
                     point.position = (float)HERO_Motion_Profile_Example.MotionProfile.PointsPosition[i] * (float)kTicksPerRotation; //convert  from rotations to sensor units
@@ -282,7 +288,7 @@ namespace HERO_Motion_Profile_Example
             }
             //Debug.Print("Falcon CUR:"+ _talon.GetOutputCurrent() + "\tFalcon VEL:"+ _talon.GetSelectedSensorVelocity() + "\tFalcon POS:" + _talon.GetSelectedSensorPosition());
             //Debug.Print("GamepadB0: " + _gamepad.GetButton(0));
-            //Debug.Print("" + _talon.GetActiveTrajectoryVelocity(1) + ", " + _talon.GetSelectedSensorVelocity(1));
+            
         }
 
         void Instrument()
