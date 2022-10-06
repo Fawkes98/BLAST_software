@@ -155,10 +155,10 @@ namespace HERO_Motion_Profile_Example
 
             //set motor control parameters
             
-            _talon.Config_kP(0, 0.02f);
+            _talon.Config_kP(0, 0.3f);
             _talon.Config_kI(0, 0f);
             _talon.Config_kD(0, 0.0f);
-            _talon.Config_kF(0, 0.09724488664269079041176191004297f);
+            _talon.Config_kF(0, 0.0f);
 
             //_talon.Config_kP(1, 0f);
             //_talon.Config_kI(1, 0f);
@@ -168,10 +168,11 @@ namespace HERO_Motion_Profile_Example
             _talon.SelectProfileSlot(0, 0);
             _talon.ConfigNominalOutputForward(0f, 50);
             _talon.ConfigNominalOutputReverse(0f, 50);
-            _talon.ConfigPeakOutputForward(+1.0f, 50);
-            _talon.ConfigPeakOutputReverse(-1.0f, 50);
+            _talon.ConfigPeakOutputForward(+0.5f, 50); //_talon.ConfigPeakOutputForward(+1.0f, 50);
+            _talon.ConfigPeakOutputReverse(0.0f, 50); //_talon.ConfigPeakOutputReverse(-1.0f, 50);
             _talon.ChangeMotionControlFramePeriod(5);
-            _talon.ConfigMotionProfileTrajectoryPeriod(0, 50);
+            _talon.ConfigMotionProfileTrajectoryPeriod(1000, 50);
+            _talon.SetStatusFramePeriod(StatusFrame.Status_2_Feedback0_, 1, 50);
             
             //set GPIO pins and states
 
@@ -233,7 +234,11 @@ namespace HERO_Motion_Profile_Example
                 if (--cntPrint <= 0)
                 {
                     cntPrint = 5;
-                    Debug.Print("" + _talon.GetActiveTrajectoryVelocity(0) + ", " + _talon.GetSelectedSensorVelocity(0));
+                    Debug.Print(
+                        "Vel:" + _talon.GetActiveTrajectoryVelocity(0) / (float)kTicksPerRotation * 10 + 
+                        "[" + _talon.GetSelectedSensorVelocity(0) / (float)kTicksPerRotation * 10 + "]\tPos:" +
+                        "" + _talon.GetActiveTrajectoryPosition(0) / (float)kTicksPerRotation +
+                        "[" + _talon.GetSelectedSensorPosition(0) / (float)kTicksPerRotation + "]");
                 }
             }
         }
@@ -267,7 +272,7 @@ namespace HERO_Motion_Profile_Example
                     point.zeroPos = (i == 0) ? true : false;
                     point.profileSlotSelect0 = 0;
                     point.profileSlotSelect1 = 0; //not used in this example
-                    point.timeDur = TrajectoryPoint.TrajectoryDuration.TrajectoryDuration_10ms;
+                    point.timeDur = (TrajectoryPoint.TrajectoryDuration)10;
                     _talon.PushMotionProfileTrajectory(point);
                 }
 
@@ -330,16 +335,16 @@ namespace HERO_Motion_Profile_Example
 
                 _sb.Append(_motionProfileStatus.isLast ? "   1   \t" : "       \t");
 
-                _sb.Append(_talon.GetActiveTrajectoryPosition(1) / 4096.0);
+                _sb.Append(_talon.GetActiveTrajectoryPosition(1) / (float)kTicksPerRotation);
                 _sb.Append("[");
-                _sb.Append(_talon.GetActiveTrajectoryVelocity(1) / 4096.0);
+                _sb.Append(_talon.GetActiveTrajectoryVelocity(1) / (float)kTicksPerRotation);
                 _sb.Append("]\t");
 
 
                 _sb.Append("\t\t\t");
-                _sb.Append(_talon.GetSelectedSensorPosition(1)/ 4096.0);
+                _sb.Append(_talon.GetSelectedSensorPosition(1)/ (float)kTicksPerRotation);
                 _sb.Append("[");
-                _sb.Append(_talon.GetSelectedSensorVelocity(1)/ 4096.0);
+                _sb.Append(_talon.GetSelectedSensorVelocity(1)/ (float)kTicksPerRotation);
                 _sb.Append("]");
                 _sb.Append("\t\t\t\t");
                 _sb.Append(_talon.GetClosedLoopError());
