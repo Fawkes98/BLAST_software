@@ -204,12 +204,18 @@ namespace HERO_Motion_Profile_Example
             {
                 double dTime = HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex];
                 double dVelocity = HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex];
-                if(timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex])
-                { 
+                double interpolatedSpeed = (timer.DurationMs - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex]) * dVelocity / dTime;
+
+                Debug.Print("[" +timer.DurationMs/1000.0+"s] "+"dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tpointIndex[" + pointIndex+"]");
+                _talon.Set(ControlMode.Velocity, HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed);
+                if (timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1])
+                {
                     pointIndex += 1;
                 }
-                double interpolatedSpeed = (timer.DurationMs - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex]) * dVelocity/dTime
-                _talon.Set(ControlMode.Velocity, HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed);
+                if(pointIndex+1 == HERO_Motion_Profile_Example.MotionProfile.kNumPoints)
+                {
+                    break;
+                }
                 Thread.Sleep(1);
             }
         }
@@ -221,7 +227,7 @@ namespace HERO_Motion_Profile_Example
             //here's where we actually cause the braking to occur
 
             brakeSSR.Write(false); //WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
-            _talon.set(ControlMode.PercentOutput,0);
+            _talon.Set(ControlMode.PercentOutput,0);
         }
 
         public void StopBraking()
