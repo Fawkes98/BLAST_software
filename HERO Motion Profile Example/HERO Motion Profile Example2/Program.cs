@@ -141,7 +141,7 @@ namespace HERO_Motion_Profile_Example
             UsbHostDevice.GetInstance(0).SetSelectableXInputFilter(UsbHostDevice.SelectableXInputFilter.XInputDevices);
             //_talon.SetControlMode(TalonFX.ControlMode.kVoltage);
 
-            _talon.ConfigFactoryDefault();
+            //_talon.ConfigFactoryDefault();
 
             /**define feedback device (CTRE Magnetic Encoder, Absolute Pos. Indexing)*/
             _talon.ConfigSelectedFeedbackSensor((FeedbackDevice)TalonFXFeedbackDevice.IntegratedSensor, 0);
@@ -157,7 +157,7 @@ namespace HERO_Motion_Profile_Example
 
             //set motor control parameters
             
-            _talon.Config_kP(0, 0.8f);
+            _talon.Config_kP(0, 0.001f);
             _talon.Config_kI(0, 0f);
             _talon.Config_kD(0, 0.0f);
             _talon.Config_kF(0, 0.0f);
@@ -170,10 +170,9 @@ namespace HERO_Motion_Profile_Example
             _talon.SelectProfileSlot(0, 0);
             _talon.ConfigNominalOutputForward(0f, 50);
             _talon.ConfigNominalOutputReverse(0f, 50);
-            _talon.ConfigPeakOutputForward(+1.0f, 50);
-            _talon.ConfigPeakOutputReverse(-1.0f, 50);
+            _talon.ConfigPeakOutputForward(+0.001f, 50);
+            _talon.ConfigPeakOutputReverse(-0.0f, 50);
             _talon.ChangeMotionControlFramePeriod(5);
-            _talon.ConfigMotionProfileTrajectoryPeriod(0, 50);
             
             //set GPIO pins and states
 
@@ -210,9 +209,11 @@ namespace HERO_Motion_Profile_Example
                 double dVelocity = HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex];
                 double interpolatedSpeed = (timer.DurationMs - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex]) * dVelocity / dTime;
 
-                Debug.Print("[" +timer.DurationMs/1000.0+"s] "+"dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tpointIndex[" + pointIndex+"]");
-                double ticksSpeed = (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) * (float)kTicksPerRotation / 600.0;
-                _talon.Set(ControlMode.Velocity, ticksSpeed);
+                double tickSpeed = (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) * (float)kTicksPerRotation / 600.0;
+                Debug.Print("[" + timer.DurationMs / 1000.0 + "s] " + "dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tactual: " + _talon.GetActiveTrajectoryVelocity(0) + "\tpointIndex[" + pointIndex + "]\tsentTps: " + tickSpeed); ;
+
+                _talon.Set(ControlMode.Velocity, tickSpeed);
+                CTRE.Phoenix.Watchdog.Feed();
                 if (timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1])
                 {
                     pointIndex += 1;

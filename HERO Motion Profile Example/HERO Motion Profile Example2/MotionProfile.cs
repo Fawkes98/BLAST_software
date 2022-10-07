@@ -20,8 +20,8 @@ namespace HERO_Motion_Profile_Example
         public static double[] velocityArray = new double[] //rpm
         {
             0,
-            240,
-            240,
+            60,
+            60,
             0,
         };
         public static bool[] brakeFlag = new bool[]
