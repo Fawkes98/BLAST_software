@@ -133,18 +133,22 @@ namespace HERO_Motion_Profile_Example
 
         int pointIndex = 0;
 
+
+        InputPort digitalInKey = new InputPort(CTRE.HERO.IO.Port5.Pin4, false, Port.ResistorMode.PullDown);
+
         public void Run()
         {
             UsbHostDevice.GetInstance(0).SetSelectableXInputFilter(UsbHostDevice.SelectableXInputFilter.XInputDevices);
             //_talon.SetControlMode(TalonFX.ControlMode.kVoltage);
 
             _talon.ConfigFactoryDefault();
-            
+
             /**define feedback device (CTRE Magnetic Encoder, Absolute Pos. Indexing)*/
-            _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 1);
-            
-            
-            
+            _talon.ConfigSelectedFeedbackSensor((FeedbackDevice)TalonFXFeedbackDevice.IntegratedSensor, 0);
+            _talon.ConfigIntegratedSensorInitializationStrategy(CTRE.Phoenix.Sensors.SensorInitializationStrategy.BootToZero, 50);
+
+            _talon.SetNeutralMode(NeutralMode.Coast);
+
             //set encoder direction
             _talon.SetSensorPhase(true);
 
@@ -153,10 +157,10 @@ namespace HERO_Motion_Profile_Example
 
             //set motor control parameters
             
-            //_talon.Config_kP(0, 0.8f);
-            //_talon.Config_kI(0, 0f);
-            //_talon.Config_kD(0, 0.0f);
-            //_talon.Config_kF(0, 0.0f);
+            _talon.Config_kP(0, 0.8f);
+            _talon.Config_kI(0, 0f);
+            _talon.Config_kD(0, 0.0f);
+            _talon.Config_kF(0, 0.0f);
 
             //_talon.Config_kP(1, 0f);
             //_talon.Config_kI(1, 0f);
@@ -167,7 +171,7 @@ namespace HERO_Motion_Profile_Example
             _talon.ConfigNominalOutputForward(0f, 50);
             _talon.ConfigNominalOutputReverse(0f, 50);
             _talon.ConfigPeakOutputForward(+1.0f, 50);
-            _talon.ConfigPeakOutputReverse(-0.0f, 50);
+            _talon.ConfigPeakOutputReverse(-1.0f, 50);
             _talon.ChangeMotionControlFramePeriod(5);
             _talon.ConfigMotionProfileTrajectoryPeriod(0, 50);
             
@@ -175,7 +179,7 @@ namespace HERO_Motion_Profile_Example
 
             //digitalOutKey.Write(true); //sets Output to Logic High
 
-            InputPort digitalInKey = new InputPort(CTRE.HERO.IO.Port5.Pin4, false, Port.ResistorMode.PullDown);
+            
             //OutputPort digitalOutKey = new OutputPort(CTRE.HERO.IO.Port5.Pin4,false);
 
             bool Ready = false;
@@ -207,7 +211,8 @@ namespace HERO_Motion_Profile_Example
                 double interpolatedSpeed = (timer.DurationMs - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex]) * dVelocity / dTime;
 
                 Debug.Print("[" +timer.DurationMs/1000.0+"s] "+"dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tpointIndex[" + pointIndex+"]");
-                _talon.Set(ControlMode.Velocity, HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed);
+                double ticksSpeed = (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) * (float)kTicksPerRotation / 600.0;
+                _talon.Set(ControlMode.Velocity, ticksSpeed);
                 if (timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1])
                 {
                     pointIndex += 1;
@@ -217,6 +222,10 @@ namespace HERO_Motion_Profile_Example
                     break;
                 }
                 Thread.Sleep(1);
+            }
+            while (true)
+            {
+                _talon.Set(ControlMode.PercentOutput, 0);
             }
         }
 
