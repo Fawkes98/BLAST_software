@@ -129,8 +129,9 @@ namespace HERO_Motion_Profile_Example
         OutputPort brakeSSR = new OutputPort(CTRE.HERO.IO.Port5.Pin5, false);
         bool brakeToggle = false;
 
-        MotionProfileStatus _motionProfileStatus = new MotionProfileStatus();
-        //MotionProfileStatus _trajectoryPos = new MotionProfileStatus();
+        Stopwatch timer = new Stopwatch();
+
+        int pointIndex = 0;
 
         public void Run()
         {
@@ -198,80 +199,15 @@ namespace HERO_Motion_Profile_Example
 
             //  StopBraking();
             /* loop forever */
-            float konstantP = 1;
-            float konstantI = 0;
-            float konstantD = 0;
-            int mode = 0;
+            timer.Start();
             while (true)
             {
-                float lAxis = _gamepad.GetAxis(3);
-                if(lAxis < 0.01 && lAxis > -0.01)
-                {
-                    lAxis = 0;
-                }
-                CTRE.Phoenix.Watchdog.Feed();
-                Debug.Print("kP:" + konstantP + " | kI:" + konstantI + " | kD:" + konstantD + " | VAL:" + lAxis);
-
-                _talon.Set(ControlMode.Velocity, lAxis * 50f);
-                //_talon.Set(ControlMode.PercentOutput, _gamepad.GetAxis(3) * 0.3f);
-
-                //_talon.Config_kP(0, konstantP);
-                //_talon.Config_kI(0, konstantI);
-                //_talon.Config_kD(0, konstantD);
-                float axis = _gamepad.GetAxis(1);
-                if(axis < 0.01 && axis > -0.01)
-                {
-                    axis = 0;
-                }
-                if(mode == 0)
-                {
-                    konstantP += axis * 0.01f;
-                }
-                else if(mode == 1)
-                {
-                    konstantI += axis * 0.0001f;
-                }
-                else if (mode == 2)
-                {
-                    konstantD += axis * 0.001f;
-                }
-                if (_gamepad.GetButton(1))
-                {
-                    mode = 0;
-                    Debug.Print("------------------\n----- P MODE -----\n------------------");
-                }
-                else if (_gamepad.GetButton(2))
-                {
-                    mode = 1;
-                    Debug.Print("------------------\n----- I MODE -----\n------------------");
-                }
-                else if (_gamepad.GetButton(3))
-                {
-                    mode = 2;
-                    Debug.Print("------------------\n----- D MODE -----\n------------------");
-                }
-
-
-                if (digitalInKey.Read() || _gamepad.GetButton(4))
-                {
-                    _talon.Set(ControlMode.PercentOutput, 0);
-                    Thread.Sleep(1000);
-                    while (true)
-                    {
-                        bool resume = (digitalInKey.Read() || _gamepad.GetButton(4));
-                        Debug.Print("Paused");
-                        _talon.Set(ControlMode.PercentOutput, 0);
-                        if (resume)
-                        {
-                            Debug.Print("Unpaused");
-                            Thread.Sleep(1000);
-                            break;
-                        }
-                    }
-                }
-                Thread.Sleep(5);
+                if(timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex])
+                { }
+                Thread.Sleep(1);
             }
         }
+
         
         public void StartBraking()
         {

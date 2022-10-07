@@ -107,3 +107,57 @@ That was removed, and since then its been working better.
 Still need to fix that stupid CAN frame not received error. It barely actually sends frames, but I remember it not doing this a few weeks ago. Wierd.
 
 Note to bring in custom arduino controller in, potentially uses D-input.
+
+### Hardware - Zachary
+
+```
+For Zach to fill in
+```
+
+# Friday 9/30/2022
+
+### Software - Anshal
+
+Motor started out today fixed, ran some simple profiles, and it seems to be trying to stop again, which is good, but the errors are still coming in, which is bad
+
+On a terrible note, I was a bit too late to hit the stop on one of the runs and heard something of a snap, and now the motor kinda just grinds.
+
+On a separate note, it doesn't seem like the preprocessor directives are working with multiple profiles, need to test that again
+
+Since motor was broken, wrote all of the PID tuner code, given that the arduino controller works. Note: it actually uses xinput, but theres a way to use xinput with the HERO, so that works.
+
+Need to add an automatic rule that if the motor is decceling it just sets pid to 0,0,0,0
+
+Also need to see if it is possible to increase the rate at which frames are given from the FX, it seems we're still getting garbage response.
+
+Macro for FY, AUSX, etc. didn't work.
+
+### Hardware - Zachary
+
+```
+For Zachary to fill out.s
+```
+
+# Monday 10/3/2022
+
+### Software - Anshal
+
+Started with fixing up some modes on PID Tuner, current pids are far too agressive with no load, but the controller broke midway
+
+Swapped over to working on motion profiling, since that was the main objective of today, figured out how to turn on Coast mode in code, other than that, little progress. Emailed support about the memory issue, since the 3001 point profile is too big, and our actual profile is 60k points, so thats an important issue that needs to be fixed.
+
+# Wednesday 10/5/2022
+
+Got responses to my emails, and learned how to:
+
+- Interpolate (WIP)
+
+- Increase status frame windows (WIP)
+
+- Set up the sensor correctly
+
+Still need to figure out how to increase the duration between points, and make sure that the interpolation works correctly, because as of now it could be doing anything and I wouldn't know.
+
+# Thursday 10/6/2022
+
+Spent more time testing the existing setup, so no avail. Going to try and set up custom motion profile code and interpolation, which should theoretically use far less space and linearly interpolate between the points.
