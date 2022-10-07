@@ -154,4 +154,6 @@ Got responses to my emails, and learned how to:
 
 - Increase status frame windows (WIP)
 
-- [ADD]
+- Set up the sensor correctly
+
+Still need to figure out how to increase the duration between points, and make sure that the interpolation works correctly, because as of now it could be doing anything and I wouldn't know.
