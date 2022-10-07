@@ -157,3 +157,7 @@ Got responses to my emails, and learned how to:
 - Set up the sensor correctly
 
 Still need to figure out how to increase the duration between points, and make sure that the interpolation works correctly, because as of now it could be doing anything and I wouldn't know.
+
+# Thursday 10/6/2022
+
+Spent more time testing the existing setup, so no avail. Going to try and set up custom motion profile code and interpolation, which should theoretically use far less space and linearly interpolate between the points.
