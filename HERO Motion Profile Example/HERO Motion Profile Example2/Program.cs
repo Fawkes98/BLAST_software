@@ -167,7 +167,7 @@ namespace HERO_Motion_Profile_Example
             _talon.ConfigNominalOutputForward(0f, 50);
             _talon.ConfigNominalOutputReverse(0f, 50);
             _talon.ConfigPeakOutputForward(+1.0f, 50);
-            _talon.ConfigPeakOutputReverse(-1.0f, 50);
+            _talon.ConfigPeakOutputReverse(-0.0f, 50);
             _talon.ChangeMotionControlFramePeriod(5);
             _talon.ConfigMotionProfileTrajectoryPeriod(0, 50);
             
@@ -202,8 +202,14 @@ namespace HERO_Motion_Profile_Example
             timer.Start();
             while (true)
             {
+                double dTime = HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex];
+                double dVelocity = HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex];
                 if(timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex])
-                { }
+                { 
+                    pointIndex += 1;
+                }
+                double interpolatedSpeed = (timer.DurationMs - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex]) * dVelocity/dTime
+                _talon.Set(ControlMode.Velocity, HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed);
                 Thread.Sleep(1);
             }
         }
@@ -214,7 +220,8 @@ namespace HERO_Motion_Profile_Example
             Debug.Print("HALT");
             //here's where we actually cause the braking to occur
 
-            //brakeSSR.Write(false); WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
+            brakeSSR.Write(false); //WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
+            _talon.set(ControlMode.PercentOutput,0);
         }
 
         public void StopBraking()
@@ -222,7 +229,7 @@ namespace HERO_Motion_Profile_Example
             Debug.Print("DO NOT HALT");
             //here's where we remove the brake;
 
-            //brakeSSR.Write(true); WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
+            brakeSSR.Write(true); //WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
         }
 
 

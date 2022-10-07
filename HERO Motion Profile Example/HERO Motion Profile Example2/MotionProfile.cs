@@ -18,14 +18,14 @@ namespace HERO_Motion_Profile_Example
             30
         };
 
-        public static double[] PointsVelocity = new double[] //rpm
+        public static double[] velocityArray = new double[] //rpm
         {
             0,
             60,
             60,
             0,
         };
-        public static bool[] BrakeFlag = new bool[]
+        public static bool[] brakeFlag = new bool[]
         {
             false
         };
