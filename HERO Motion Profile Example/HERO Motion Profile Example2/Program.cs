@@ -170,10 +170,13 @@ namespace HERO_Motion_Profile_Example
             _talon.ConfigNominalOutputReverse(0f, 50);
             _talon.ConfigPeakOutputForward(+0.5f, 50); //_talon.ConfigPeakOutputForward(+1.0f, 50);
             _talon.ConfigPeakOutputReverse(0.0f, 50); //_talon.ConfigPeakOutputReverse(-1.0f, 50);
+
             _talon.ChangeMotionControlFramePeriod(5);
-            _talon.ConfigMotionProfileTrajectoryPeriod(1000, 50);
+
+            _talon.ConfigMotionProfileTrajectoryPeriod(0, 50);
             _talon.SetStatusFramePeriod(StatusFrame.Status_2_Feedback0_, 1, 50);
-            
+
+            _talon.ConfigSetParameter((CTRE.Phoenix.LowLevel.ParamEnum)121, 1, 0, 0);
             //set GPIO pins and states
 
             //digitalOutKey.Write(true); //sets Output to Logic High
@@ -235,8 +238,8 @@ namespace HERO_Motion_Profile_Example
                 {
                     cntPrint = 5;
                     Debug.Print(
-                        "Vel:" + _talon.GetActiveTrajectoryVelocity(0) / (float)kTicksPerRotation * 10 + 
-                        "[" + _talon.GetSelectedSensorVelocity(0) / (float)kTicksPerRotation * 10 + "]\tPos:" +
+                        "Vel[Actual]: " + _talon.GetActiveTrajectoryVelocity(0) / (float)kTicksPerRotation * 10 + 
+                        "[" + _talon.GetSelectedSensorVelocity(0) / (float)kTicksPerRotation * 10 + "]\tPos[Actual]" +
                         "" + _talon.GetActiveTrajectoryPosition(0) / (float)kTicksPerRotation +
                         "[" + _talon.GetSelectedSensorPosition(0) / (float)kTicksPerRotation + "]");
                 }
@@ -262,7 +265,6 @@ namespace HERO_Motion_Profile_Example
                 TrajectoryPoint point = new TrajectoryPoint();
                 _talon.ClearMotionProfileHasUnderrun();
                 _talon.ClearMotionProfileTrajectories();
-                _talon.ConfigSetParameter((CTRE.Phoenix.LowLevel.ParamEnum)121, 1, 0, 0);
                 for (uint i = 0; i < HERO_Motion_Profile_Example.MotionProfile.kNumPoints; ++i)
                 {
                     point.position = (float)HERO_Motion_Profile_Example.MotionProfile.PointsPosition[i] * (float)kTicksPerRotation; //convert  from rotations to sensor units
@@ -272,7 +274,7 @@ namespace HERO_Motion_Profile_Example
                     point.zeroPos = (i == 0) ? true : false;
                     point.profileSlotSelect0 = 0;
                     point.profileSlotSelect1 = 0; //not used in this example
-                    point.timeDur = (TrajectoryPoint.TrajectoryDuration)10;
+                    point.timeDur = (TrajectoryPoint.TrajectoryDuration)(10);
                     _talon.PushMotionProfileTrajectory(point);
                 }
 
