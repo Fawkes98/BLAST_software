@@ -157,9 +157,9 @@ namespace HERO_Motion_Profile_Example
 
             //set motor control parameters
             
-            _talon.Config_kP(0, 0.001f);
+            _talon.Config_kP(0, 0.15f);
             _talon.Config_kI(0, 0f);
-            _talon.Config_kD(0, 0.0f);
+            _talon.Config_kD(0, 1.0f);
             _talon.Config_kF(0, 0.0f);
 
             //_talon.Config_kP(1, 0f);
@@ -170,7 +170,7 @@ namespace HERO_Motion_Profile_Example
             _talon.SelectProfileSlot(0, 0);
             _talon.ConfigNominalOutputForward(0f, 50);
             _talon.ConfigNominalOutputReverse(0f, 50);
-            _talon.ConfigPeakOutputForward(+0.001f, 50);
+            _talon.ConfigPeakOutputForward(+0.3f, 50);
             _talon.ConfigPeakOutputReverse(-0.0f, 50);
             _talon.ChangeMotionControlFramePeriod(5);
             
@@ -208,8 +208,7 @@ namespace HERO_Motion_Profile_Example
                 double dTime = HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex];
                 double dVelocity = HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex];
                 double interpolatedSpeed = (timer.DurationMs - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex]) * dVelocity / dTime;
-
-                double tickSpeed = (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) * (float)kTicksPerRotation / 600.0;
+                double tickSpeed = (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) * (float)kTicksPerRotation / 600.0 * 60;
                 Debug.Print("[" + timer.DurationMs / 1000.0 + "s] " + "dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tactual: " + _talon.GetActiveTrajectoryVelocity(0) + "\tpointIndex[" + pointIndex + "]\tsentTps: " + tickSpeed); ;
 
                 _talon.Set(ControlMode.Velocity, tickSpeed);
