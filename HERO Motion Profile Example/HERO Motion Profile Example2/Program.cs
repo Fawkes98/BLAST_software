@@ -138,12 +138,13 @@ namespace HERO_Motion_Profile_Example
             //_talon.SetControlMode(TalonFX.ControlMode.kVoltage);
 
             _talon.ConfigFactoryDefault();
-            
+
             /**define feedback device (CTRE Magnetic Encoder, Absolute Pos. Indexing)*/
-            _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 1);
-            
-            
-            
+            _talon.ConfigSelectedFeedbackSensor((FeedbackDevice)TalonFXFeedbackDevice.IntegratedSensor, 0);
+            _talon.ConfigIntegratedSensorInitializationStrategy(CTRE.Phoenix.Sensors.SensorInitializationStrategy.BootToZero, 50);
+
+
+
             //set encoder direction
             _talon.SetSensorPhase(true);
 
@@ -165,8 +166,8 @@ namespace HERO_Motion_Profile_Example
             _talon.SelectProfileSlot(0, 0);
             _talon.ConfigNominalOutputForward(0f, 50);
             _talon.ConfigNominalOutputReverse(0f, 50);
-            _talon.ConfigPeakOutputForward(+1.0f, 50);
-            _talon.ConfigPeakOutputReverse(-1.0f, 50);
+            _talon.ConfigPeakOutputForward(+0.3f, 50);
+            _talon.ConfigPeakOutputReverse(-0.0f, 50);
             _talon.ChangeMotionControlFramePeriod(5);
             _talon.ConfigMotionProfileTrajectoryPeriod(0, 50);
             
@@ -198,26 +199,26 @@ namespace HERO_Motion_Profile_Example
 
             //  StopBraking();
             /* loop forever */
-            float konstantP = 1;
-            float konstantI = 0;
-            float konstantD = 0;
+            float konstantP = 0.15f;
+            float konstantI = 0f;
+            float konstantD = 1f;
             int mode = 0;
             while (true)
             {
                 float lAxis = _gamepad.GetAxis(3);
-                if(lAxis < 0.01 && lAxis > -0.01)
+                if(lAxis < 0.05 && lAxis > -0.05)
                 {
                     lAxis = 0;
                 }
-                CTRE.Phoenix.Watchdog.Feed();
-                Debug.Print("kP:" + konstantP + " | kI:" + konstantI + " | kD:" + konstantD + " | VAL:" + lAxis);
+                
+                Debug.Print("kP:" + konstantP + " | kI:" + konstantI + " | kD:" + konstantD + " | VAL:" + lAxis + " | %:" + _talon.GetMotorOutputPercent());
 
-                _talon.Set(ControlMode.Velocity, lAxis * 50f);
+                _talon.Set(ControlMode.Velocity, lAxis * 4000f);
                 //_talon.Set(ControlMode.PercentOutput, _gamepad.GetAxis(3) * 0.3f);
-
-                //_talon.Config_kP(0, konstantP);
-                //_talon.Config_kI(0, konstantI);
-                //_talon.Config_kD(0, konstantD);
+                CTRE.Phoenix.Watchdog.Feed();
+                _talon.Config_kP(0, konstantP);
+                _talon.Config_kI(0, konstantI);
+                _talon.Config_kD(0, konstantD);
                 float axis = _gamepad.GetAxis(1);
                 if(axis < 0.01 && axis > -0.01)
                 {
