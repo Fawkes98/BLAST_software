@@ -128,6 +128,7 @@ namespace HERO_Motion_Profile_Example
 
         OutputPort brakeSSR = new OutputPort(CTRE.HERO.IO.Port5.Pin5, false);
         bool brakeToggle = false;
+        double brakeThreshold = 0;
 
         Stopwatch timer = new Stopwatch();
 
@@ -216,6 +217,15 @@ namespace HERO_Motion_Profile_Example
                     Debug.Print("" + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\t" + _talon.GetSelectedSensorVelocity(0) / (float)kTicksPerRotation * 10 + "\t" + _talon.GetMotorOutputPercent());
                 }
                 _talon.Set(ControlMode.Velocity, tickSpeed);
+
+                if(dVelocity / dTime < -brakeThreshold && brakeToggle == false)
+                {
+                    StartBraking();
+                }else if (dVelocity / dTime >= -brakeThreshold && brakeToggle == true)
+                {
+                    StopBraking();
+                }
+
                 CTRE.Phoenix.Watchdog.Feed();
                 if (timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1])
                 {
@@ -236,6 +246,7 @@ namespace HERO_Motion_Profile_Example
         
         public void StartBraking()
         {
+            brakeToggle = true;
             Debug.Print("HALT");
             //here's where we actually cause the braking to occur
 
@@ -245,6 +256,7 @@ namespace HERO_Motion_Profile_Example
 
         public void StopBraking()
         {
+            brakeToggle = false;
             Debug.Print("DO NOT HALT");
             //here's where we remove the brake;
 
