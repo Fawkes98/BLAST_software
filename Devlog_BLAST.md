@@ -135,7 +135,7 @@ Macro for FY, AUSX, etc. didn't work.
 ### Hardware - Zachary
 
 ```
-For Zachary to fill out.s
+For Zachary to fill out.
 ```
 
 # Monday 10/3/2022
@@ -147,6 +147,8 @@ Started with fixing up some modes on PID Tuner, current pids are far too agressi
 Swapped over to working on motion profiling, since that was the main objective of today, figured out how to turn on Coast mode in code, other than that, little progress. Emailed support about the memory issue, since the 3001 point profile is too big, and our actual profile is 60k points, so thats an important issue that needs to be fixed.
 
 # Wednesday 10/5/2022
+
+### Software - Anshal
 
 Got responses to my emails, and learned how to:
 
@@ -160,4 +162,54 @@ Still need to figure out how to increase the duration between points, and make s
 
 # Thursday 10/6/2022
 
+### Software - Anshal
+
 Spent more time testing the existing setup, so no avail. Going to try and set up custom motion profile code and interpolation, which should theoretically use far less space and linearly interpolate between the points.
+
+The built-in interpolation uses a positional and velocity thing, but we don't care about the positon, and it prioritizes position, which is not what we want.
+
+My new code should interpolate between points of (Velocity, Time), which is what we want anyway.
+
+# Friday 10/7/2022
+
+### Software - Anshal
+
+Wrote my interpolation code at home, then came in to test it on the free-floating motor. It started out rapidly vibrating back and forth, due to very bad PID.
+
+After the PIDs got toned down a lot, the motor started moving slower, and it WORKS.
+
+After a slight bit of debugging, the motor interpolates the correct intended speed, and it actually sends that to the motor. Since all the PID is done on-motor, we don't have to worry about any lag in that regard, but we do need to consider lag for the brake module.
+
+The PIDs will need to be redone on the actual rig, so theres no point tuning beyond a base level of functionality on the free-floating motor.  
+
+We also need to test how many points we can get on this thing, so Zach can use the best resolution for the profile generator.
+
+At this point, all thats left is tuning, adding the brake, and Zach writing matlab code to actually generate a new profile on the new format.
+
+# Monday 10/10/2022
+
+### Software - Anshal
+
+Set up a google sheets that will help me visualize the profile, and where the motor is deviating from that. The [Error Visualizer - Google Sheets](https://docs.google.com/spreadsheets/d/1IiduuXmp9zJL7my34VadO7g3zJd_v2-7pjls4qTtzgY/edit?usp=sharing) also has a graph for the power out of the motor, so I can tell how much current is being sent out of the motor. When the motor is braking or in any way decceling, that current should be 0.
+
+![wackyProfile.png](wackyProfile.png)
+
+Second half of the workday, I set up braking as it related to the motor following the profile. Today I only set up simple on/off braking. In the future I'll be adjusting the threshold for braking as well as making it feather.
+
+Above is a photo of a random profile I ran and how it looks on the visualizer. The Desired and Actual labels are reversed
+
+# Monday 10/17/2022
+
+### Software - Anshal
+
+Had to hard grind classes for the past week, so was unable to come in, but now I'm back for the last thing to do without the rig. 
+
+Set up feather braking, need to conduct tests to make sure that a percentage value will appropriately feather, and need to see what the lowest period is that the brake can go.
+
+The braking seems delayed from when the code needs it, so maybe code needs to look ahead and start braking preeptively, which is possible when we know the whole profile in advance. 
+
+Fixed bug where motor moves during braking period
+
+Wednesday, plans to come in at 5, Friday, plans to come in early morning before noon class.
+
+Forgot cable for controller, so am unable to do joystick-enabled analog tests of the brake's feathering function.

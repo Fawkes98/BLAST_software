@@ -32,10 +32,9 @@ using Microsoft.SPOT.Hardware;
 using System.Text;
 using System.Threading;
 
-#define DUTY_CYCLE_PERIOD 1000; //ms
-
 namespace HERO_Motion_Profile_Example
 {
+
     //    /** CSV Import */
     //    public class Import
     //    {
@@ -111,6 +110,9 @@ namespace HERO_Motion_Profile_Example
 
     public class RobotApplication
     {
+
+        int DUTY_CYCLE_PERIOD = 250; //ms
+
         double[] PID = new double[] { 0.8, 0, 0.02 };
 
         TalonFX _talon = new TalonFX(0);
@@ -211,15 +213,21 @@ namespace HERO_Motion_Profile_Example
                 double dVelocity = HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex];
                 double interpolatedSpeed = (timer.DurationMs - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex]) * dVelocity / dTime;
                 double tickSpeed = (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) * (float)kTicksPerRotation / 600.0 * 60;
-                bool complexPrint = false;
-                if (complexPrint){
-                    Debug.Print("[" + timer.DurationMs / 1000.0 + "s] " + "dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tactual: " + _talon.GetSelectedSensorVelocity(0) / (float)kTicksPerRotation * 10 + "\tpointIndex[" + pointIndex + "]\tsentTps: " + tickSpeed + "\tpowerOut: " + _talon.GetMotorOutputPercent()); ;
-                }else{
+                
+                short printMode = 2; // 0 is none, 1 is complex, 2 is graph-printing
+                if (printMode == 1)
+                {
+                    Debug.Print("[" + timer.DurationMs / 1000.0 + "s] " + "dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tactual: " + _talon.GetSelectedSensorVelocity(0) / (float)kTicksPerRotation * 10 + "\tpointIndex[" + pointIndex + "]\tsentTps: " + tickSpeed + "\tpowerOut: " + _talon.GetMotorOutputPercent() + "brakePercent: " + ((float)dVelocity/dTime * -50) );
+                }else if(printMode == 2){
                     Debug.Print("" + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\t" + _talon.GetSelectedSensorVelocity(0) / (float)kTicksPerRotation * 10 + "\t" + _talon.GetMotorOutputPercent());
                 }
-                _talon.Set(ControlMode.Velocity, tickSpeed);
 
-                if(dVelocity / dTime =< -brakeThreshold && brakeToggle == false)
+                if (!brakeToggle)
+                {
+                    _talon.Set(ControlMode.Velocity, tickSpeed);
+                }
+
+                if(dVelocity / dTime <= -brakeThreshold && brakeToggle == false)
                 {
                     StartBraking();
                 }
@@ -228,14 +236,14 @@ namespace HERO_Motion_Profile_Example
                     StopBraking();
                 }
 
-                brake((double)dVelocity/dTime);
+                brake((double)dVelocity * -25.0/dTime);
 
                 CTRE.Phoenix.Watchdog.Feed();
                 if (timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1])
                 {
                     pointIndex += 1;
                 }
-                if(pointIndex+1 == HERO_Motion_Profile_Example.MotionProfile.kNumPoints)
+                if(pointIndex + 1 == HERO_Motion_Profile_Example.MotionProfile.kNumPoints)
                 {
                     break;
                 }
@@ -244,6 +252,7 @@ namespace HERO_Motion_Profile_Example
             while (true)
             {
                 _talon.Set(ControlMode.PercentOutput, 0);
+                brakeSSR.Write(false);
             }
         }
         
@@ -252,11 +261,13 @@ namespace HERO_Motion_Profile_Example
                 long currentTime = timer.DurationMs;
                 long dTime = currentTime - brakeTimeStart;
 
-                timeInPeriod = dTime % DUTY_CYCLE_PERIOD;
+                long timeInPeriod = dTime % DUTY_CYCLE_PERIOD;
                 if(((double)timeInPeriod / DUTY_CYCLE_PERIOD) < percent){
                     brakeSSR.Write(false);
+                    //Debug.Print("On " + timeInPeriod + " %:" + percent);
                 }else{
                     brakeSSR.Write(true);
+                    //Debug.Print("Off " + timeInPeriod + " %:" + percent);
                 }
             }
         }       
@@ -265,7 +276,7 @@ namespace HERO_Motion_Profile_Example
         public void StartBraking()
         {
             brakeToggle = true;
-            Debug.Print("HALT");
+            //Debug.Print("HALT");
 
             brakeTimeStart = timer.DurationMs;
 
@@ -277,7 +288,7 @@ namespace HERO_Motion_Profile_Example
         public void StopBraking()
         {
             brakeToggle = false;
-            Debug.Print("STOP HALTING");
+            //Debug.Print("STOP HALTING");
 
             brakeSSR.Write(true); //WHEN YOU ENABLE THIS, REMEMBER TO STOP MOTOR COAST DURING THIS PART
         }
