@@ -32,7 +32,7 @@ using Microsoft.SPOT.Hardware;
 using System.Text;
 using System.Threading;
 
-
+#define DUTY_CYCLE_PERIOD 1000; //ms
 
 namespace HERO_Motion_Profile_Example
 {
@@ -134,6 +134,7 @@ namespace HERO_Motion_Profile_Example
 
         int pointIndex = 0;
 
+        long brakeTimeStart = 0;
 
         InputPort digitalInKey = new InputPort(CTRE.HERO.IO.Port5.Pin4, false, Port.ResistorMode.PullDown);
 
@@ -218,13 +219,16 @@ namespace HERO_Motion_Profile_Example
                 }
                 _talon.Set(ControlMode.Velocity, tickSpeed);
 
-                if(dVelocity / dTime < -brakeThreshold && brakeToggle == false)
+                if(dVelocity / dTime =< -brakeThreshold && brakeToggle == false)
                 {
                     StartBraking();
-                }else if (dVelocity / dTime >= -brakeThreshold && brakeToggle == true)
+                }
+                else if (dVelocity / dTime > -brakeThreshold && brakeToggle == true)
                 {
                     StopBraking();
                 }
+
+                brake((double)dVelocity/dTime);
 
                 CTRE.Phoenix.Watchdog.Feed();
                 if (timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1])
@@ -242,25 +246,40 @@ namespace HERO_Motion_Profile_Example
                 _talon.Set(ControlMode.PercentOutput, 0);
             }
         }
-
         
+        public void brake(double percent){ //0 to 1, double
+            if(brakeToggle){
+                long currentTime = timer.DurationMs;
+                long dTime = currentTime - brakeTimeStart;
+
+                timeInPeriod = dTime % DUTY_CYCLE_PERIOD;
+                if(((double)timeInPeriod / DUTY_CYCLE_PERIOD) < percent){
+                    brakeSSR.Write(false);
+                }else{
+                    brakeSSR.Write(true);
+                }
+            }
+        }       
+
+        //here's where we actually cause the braking to occur
         public void StartBraking()
         {
             brakeToggle = true;
             Debug.Print("HALT");
-            //here's where we actually cause the braking to occur
+
+            brakeTimeStart = timer.DurationMs;
 
             brakeSSR.Write(false); //WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
             _talon.Set(ControlMode.PercentOutput,0);
         }
 
+        //here's where we remove the brake;
         public void StopBraking()
         {
             brakeToggle = false;
-            Debug.Print("DO NOT HALT");
-            //here's where we remove the brake;
+            Debug.Print("STOP HALTING");
 
-            brakeSSR.Write(true); //WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
+            brakeSSR.Write(true); //WHEN YOU ENABLE THIS, REMEMBER TO STOP MOTOR COAST DURING THIS PART
         }
 
 
