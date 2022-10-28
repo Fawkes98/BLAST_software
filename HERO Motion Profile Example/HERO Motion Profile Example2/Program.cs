@@ -161,9 +161,9 @@ namespace HERO_Motion_Profile_Example
 
             //set motor control parameters
             
-            _talon.Config_kP(0, 0.15f);
+            _talon.Config_kP(0, 0.75f);
             _talon.Config_kI(0, 0f);
-            _talon.Config_kD(0, 1.0f);
+            _talon.Config_kD(0, 1.4f);
             _talon.Config_kF(0, 0.0f);
 
             //_talon.Config_kP(1, 0f);

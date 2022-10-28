@@ -213,3 +213,19 @@ Fixed bug where motor moves during braking period
 Wednesday, plans to come in at 5, Friday, plans to come in early morning before noon class.
 
 Forgot cable for controller, so am unable to do joystick-enabled analog tests of the brake's feathering function.
+
+# Wednesday 10/19/2022
+
+### - Anshal
+
+Zach showed me how to put in the motor. We put in the motor.
+
+# Friday 10/28/2022
+
+### Software - Anshal
+
+Midterms delayed my coming in, plus no access to lab without key.
+
+Regardless, today did pretty much only tuning. Peter reminded us that we need to tune the actuation voltage of the brake, so we tested the min and max of actuation on the potentiometer
+
+Minimum was about 52-53. Maximum went past 100, so we set it to about 75, same as it was before.
