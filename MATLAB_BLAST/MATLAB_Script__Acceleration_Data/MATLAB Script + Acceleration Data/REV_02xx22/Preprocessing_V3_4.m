@@ -54,7 +54,7 @@ g = 9.81;               % (m/s^2)
 dt = 0.01;              % (s) timestep of output data
 r = 1.5;                % (m) boom length
 b = .1;                 % (m) pivot to payload CG
-G = 60;                 % gear reduction ratio G:1
+G = 60;                 % gearbox reduction ratio G:1
 
 % acceleration clipping
 max_accel = 15*g;       % (m/s^2) maximum acceleration allowed

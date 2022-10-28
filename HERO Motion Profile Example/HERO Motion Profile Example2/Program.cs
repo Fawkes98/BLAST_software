@@ -199,26 +199,35 @@ namespace HERO_Motion_Profile_Example
 
             //  StopBraking();
             /* loop forever */
-            float konstantP = 0.15f;
+            float konstantP = 0.734f;
             float konstantI = 0f;
-            float konstantD = 1f;
+            float konstantD = 1.4f;
+            float konstantF = 0;
             int mode = 0;
+            float lAxis = 0; ;
             while (true)
             {
-                float lAxis = _gamepad.GetAxis(3);
+                if (_gamepad.GetButton(5))
+                {
+                    lAxis = _gamepad.GetAxis(3);
+                }
                 if(lAxis < 0.05 && lAxis > -0.05)
                 {
                     lAxis = 0;
                 }
-                
-                Debug.Print("kP:" + konstantP + " | kI:" + konstantI + " | kD:" + konstantD + " | VAL:" + lAxis + " | %:" + _talon.GetMotorOutputPercent());
 
+                Debug.Print("kP:" + konstantP + " | kI:" + konstantI + " | kD:" + konstantD + " | kF:" + konstantF + " | VAL:" + lAxis + " | %:" + _talon.GetMotorOutputPercent() + " | D:" + lAxis * 4000f + " | A:" + _talon.GetSelectedSensorVelocity());
+
+                //Debug.Print("" + lAxis * 4000f + "\t" + _talon.GetSelectedSensorVelocity() + "\t" + _talon.GetMotorOutputPercent());
+                
                 _talon.Set(ControlMode.Velocity, lAxis * 4000f);
+                
                 //_talon.Set(ControlMode.PercentOutput, _gamepad.GetAxis(3) * 0.3f);
                 CTRE.Phoenix.Watchdog.Feed();
                 _talon.Config_kP(0, konstantP);
                 _talon.Config_kI(0, konstantI);
                 _talon.Config_kD(0, konstantD);
+                _talon.Config_kF(0, konstantF);
                 float axis = _gamepad.GetAxis(1);
                 if(axis < 0.01 && axis > -0.01)
                 {
@@ -236,6 +245,10 @@ namespace HERO_Motion_Profile_Example
                 {
                     konstantD += axis * 0.001f;
                 }
+                float incrementF = (_gamepad.GetAxis(4) - _gamepad.GetAxis(5))/2.0f;
+                if(incrementF > 0.01 || incrementF < -0.01)
+                    konstantF += incrementF * 0.00001f;
+                if (konstantP < 0) konstantP = 0; if (konstantI < 0) konstantI = 0; if (konstantD < 0) konstantD = 0;
                 if (_gamepad.GetButton(1))
                 {
                     mode = 0;
@@ -252,15 +265,18 @@ namespace HERO_Motion_Profile_Example
                     Debug.Print("------------------\n----- D MODE -----\n------------------");
                 }
 
+                brakeSSR.Write(!_gamepad.GetButton(10));
+
 
                 if (digitalInKey.Read() || _gamepad.GetButton(4))
                 {
+                    Debug.Print("Paused due to Green Button:" + digitalInKey.Read() + " or Y:" + _gamepad.GetButton(4));
                     _talon.Set(ControlMode.PercentOutput, 0);
                     Thread.Sleep(1000);
                     while (true)
                     {
                         bool resume = (digitalInKey.Read() || _gamepad.GetButton(4));
-                        Debug.Print("Paused");
+                        
                         _talon.Set(ControlMode.PercentOutput, 0);
                         if (resume)
                         {
