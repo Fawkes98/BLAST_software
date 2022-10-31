@@ -6,32 +6,22 @@ namespace HERO_Motion_Profile_Example
 {
     public class MotionProfile
     {
-        public const uint kNumPoints = 8;
+        public const uint kNumPoints = 3;
         // Time (ms),	Velocity (RPM)
 
         public static int[] timeArray = new int[] //ms
         {
             0,
-            5000,
-            8000,
             10000,
-            13000,
-            15000,
-            16000,
-            19000,
+            30000,
 
         };
 
         public static double[] velocityArray = new double[] //rpm
         {
             0,
-            15,
-            10,
-            20,
-            21,
-            30,
-            0,
-            5
+            60,
+            60,
         };
         public static bool[] brakeFlag = new bool[]
         {
