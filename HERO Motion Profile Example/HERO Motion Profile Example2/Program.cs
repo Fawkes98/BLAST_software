@@ -199,10 +199,10 @@ namespace HERO_Motion_Profile_Example
 
             //  StopBraking();
             /* loop forever */
-            float konstantP = 0.734f;
+            float konstantP = 0.550f;
             float konstantI = 0f;
             float konstantD = 1.4f;
-            float konstantF = 0;
+            float konstantF = 0.04f;
             int mode = 0;
             float lAxis = 0; ;
             while (true)
@@ -216,9 +216,9 @@ namespace HERO_Motion_Profile_Example
                     lAxis = 0;
                 }
 
-                Debug.Print("kP:" + konstantP + " | kI:" + konstantI + " | kD:" + konstantD + " | kF:" + konstantF + " | VAL:" + lAxis + " | %:" + _talon.GetMotorOutputPercent() + " | D:" + lAxis * 4000f + " | A:" + _talon.GetSelectedSensorVelocity());
+                //Debug.Print("kP:" + konstantP + " | kI:" + konstantI + " | kD:" + konstantD + " | kF:" + konstantF + " | VAL:" + lAxis + " | %:" + _talon.GetMotorOutputPercent() + " | D:" + lAxis * 4000f + " | A:" + _talon.GetSelectedSensorVelocity());
 
-                //Debug.Print("" + lAxis * 4000f + "\t" + _talon.GetSelectedSensorVelocity() + "\t" + _talon.GetMotorOutputPercent());
+                Debug.Print("" + lAxis * 4000f + "\t" + _talon.GetSelectedSensorVelocity() + "\t" + _talon.GetMotorOutputPercent());
                 
                 _talon.Set(ControlMode.Velocity, lAxis * 4000f);
                 
@@ -268,7 +268,7 @@ namespace HERO_Motion_Profile_Example
                 brakeSSR.Write(!_gamepad.GetButton(10));
 
 
-                if (digitalInKey.Read() || _gamepad.GetButton(4))
+                if (/**digitalInKey.Read() || **/_gamepad.GetButton(4))
                 {
                     Debug.Print("Paused due to Green Button:" + digitalInKey.Read() + " or Y:" + _gamepad.GetButton(4));
                     _talon.Set(ControlMode.PercentOutput, 0);
