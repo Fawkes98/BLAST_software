@@ -69,54 +69,7 @@ v = Data(:,2); % in terms of rotations/second, NOT RPM
 end
 
 
-%% ---------- Time & Velocity Processing ---------- %%
-%% Interpolate Data for motor
-
-% Need to make interpolate & expand info given if not spaced by desired 'dt'
-% Creation of new velocity based profile (Linear fit)
-
-i = 2; %counter
-while i <= length(t) %t_length %setting up open loop condition (NOTE: allows t to change)
-    t_width = t(i)-t(i-1);
-    if t_width > dt && (t_width/dt) > 1.000000001 %assuming dt < (time step), & calc error removal (1e-9)
-       % --- velocity fit ---
-       vDummyL = v(1:(i-1)); vDummyR = v(i:end); %bracket sections around discrepancy
-       vDumCenter(1) = v(i-1) + dt; %generate first new t point
-       V_lin = polyfit([t(i-1) t(i)], [v(i-1) v(i)], 1); %linear velocity between 2 points
-       % --- time revector ---
-       dummyL = t(1:(i-1)); dummyR = t(i:end); %bracket sections around discrepancy
-       dumCenter(1) = t(i-1) + dt; %generate first new t point
-       for j = 2:((t_width/dt)-1) % # of steps needed inserted, minus end condition
-           dumCenter(j) = dumCenter(j-1) + dt; %additional time steps between t(i-1) & t(i)
-           vDumCenter(j) = (V_lin(1)*dumCenter(j)) + V_lin(2); %linear stepped velocity at calc time step
-       end
-       % --- time expansion ---
-       t = dummyL; 
-       t((end+1):(end+length(dumCenter))) = dumCenter; 
-       t((end+1):(end+length(dummyR))) = dummyR;
-       % --- velocity expansion ---
-       v = vDummyL; 
-       v((end+1):(end+length(vDumCenter))) = vDumCenter; 
-       v((end+1):(end+length(vDummyR))) = vDummyR;
-       % --- advance ---
-       i = i+1; %advance to next step
-    else
-       i = i+1; %advance to next input
-    end
-end
-
-
-%% ---------- Position Processing ---------- %%
-% Rotational Position experienced by motor
-pos = [0];
-for i = 2:length(t)
-    pos(i) = pos(i-1) + (v(i-1)*dt); % rotations by integration
-end
-
-
 %% ------------ Output ------------ %%
-VFit_Out = [t' pos' v'];
-
 figure(1); title('Arm Rotations per Second'); xlabel('Seconds [s]'); ylabel('Arm Rotations [RPS]');
 plot(t, v, 'LineWidth', 2, 'b-');
 
