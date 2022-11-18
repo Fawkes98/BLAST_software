@@ -166,7 +166,7 @@ namespace HERO_Motion_Profile_Example
             _talon.SelectProfileSlot(0, 0);
             _talon.ConfigNominalOutputForward(0f, 50);
             _talon.ConfigNominalOutputReverse(0f, 50);
-            _talon.ConfigPeakOutputForward(+0.3f, 50);
+            _talon.ConfigPeakOutputForward(+1f, 50);
             _talon.ConfigPeakOutputReverse(-0.0f, 50);
             _talon.ChangeMotionControlFramePeriod(5);
             _talon.ConfigMotionProfileTrajectoryPeriod(0, 50);
@@ -219,9 +219,14 @@ namespace HERO_Motion_Profile_Example
                 //Debug.Print("kP:" + konstantP + " | kI:" + konstantI + " | kD:" + konstantD + " | kF:" + konstantF + " | VAL:" + lAxis + " | %:" + _talon.GetMotorOutputPercent() + " | D:" + lAxis * 4000f + " | A:" + _talon.GetSelectedSensorVelocity());
 
                 Debug.Print("" + lAxis * 4000f + "\t" + _talon.GetSelectedSensorVelocity() + "\t" + _talon.GetMotorOutputPercent());
-                
+
                 _talon.Set(ControlMode.Velocity, lAxis * 4000f);
-                
+                //_talon.Set(ControlMode.PercentOutput, lAxis);
+                if (_gamepad.GetButton(6))
+                {
+                    _talon.Set(ControlMode.PercentOutput, 1);
+                }
+
                 //_talon.Set(ControlMode.PercentOutput, _gamepad.GetAxis(3) * 0.3f);
                 CTRE.Phoenix.Watchdog.Feed();
                 _talon.Config_kP(0, konstantP);
