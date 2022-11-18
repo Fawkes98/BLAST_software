@@ -174,7 +174,7 @@ namespace HERO_Motion_Profile_Example
             _talon.SelectProfileSlot(0, 0);
             _talon.ConfigNominalOutputForward(0f, 50);
             _talon.ConfigNominalOutputReverse(0f, 50);
-            _talon.ConfigPeakOutputForward(+0.6f, 50);
+            _talon.ConfigPeakOutputForward(+1f, 50);
             _talon.ConfigPeakOutputReverse(-0.0f, 50);
             _talon.ChangeMotionControlFramePeriod(5);
             
@@ -227,7 +227,7 @@ namespace HERO_Motion_Profile_Example
                     _talon.Set(ControlMode.Velocity, tickSpeed);
                 }
 
-                if(dVelocity / dTime <= -brakeThreshold && brakeToggle == false)
+                if(dVelocity / dTime < -brakeThreshold && brakeToggle == false)
                 {
                     StartBraking();
                 }
