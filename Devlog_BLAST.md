@@ -229,3 +229,33 @@ Midterms delayed my coming in, plus no access to lab without key.
 Regardless, today did pretty much only tuning. Peter reminded us that we need to tune the actuation voltage of the brake, so we tested the min and max of actuation on the potentiometer
 
 Minimum was about 52-53. Maximum went past 100, so we set it to about 75, same as it was before.
+
+# Monday 10/31/2022
+
+### Software - Anshal
+
+Today, tried to test out the profile to show Professor Maziar, It for some reason is not running fast enough. Don't know why, need to look at code at home.
+
+# Friday 11/18/2022
+
+### Software - Anshal
+
+Figured out that the motor didn't run fast enough due to being capped at 30% for testing. Removed that, and it still worked wierdly. After a bit of digging around, the brake activator was set to <= 0, so if the brake value was at 0, it would stop motor movement and attempt to brake at 0%.
+
+That bug was fixed, however since then, the motor has still not been topping 40RPM. This is bad. From what I know, we need about 120RPM to hit the G's we're looking for.
+
+I've shown it to Zach, he says my "40" is definitely 120, so there's a good chance my calculations are off, and we don't need to go any faster. More testing is required
+
+# Tuesday 11/22/2022
+
+### Software - Anshal
+
+More debugging of this 40RPM issue. It seems very clean and very unnatural that it settles on exactly 40RPM, which is 2400RPM on the motor. I've looked into the pheonix tuner, and there's no option that caps the speed this way. 
+
+I've sent out an email to CTRE Support, we'll see how this turns out.
+
+Further tests have led me to full send the motor, and to me it seems that the output is only capable of hitting 40RPM in the current rig. I'm not sure if it's drag, friction, the intertia, or all three.
+
+Maybe there's a way to safely overclock the motor, or use this "Voltage Compensation" option.
+
+Need to show Zach, make sure its actually below what we need, because if we need faster this is going to be a problem.
