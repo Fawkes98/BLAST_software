@@ -204,7 +204,8 @@ namespace HERO_Motion_Profile_Example
             float konstantD = 1.4f;
             float konstantF = 0.04f;
             int mode = 0;
-            float lAxis = 0; ;
+            float lAxis = 0;
+            
             while (true)
             {
                 if (_gamepad.GetButton(5))
@@ -216,15 +217,21 @@ namespace HERO_Motion_Profile_Example
                     lAxis = 0;
                 }
 
+                int maxRPM = 30;//RPM
+                int velocity = (int)(lAxis * maxRPM * (float)kTicksPerRotation / 600.0 * 60);
+
                 //Debug.Print("kP:" + konstantP + " | kI:" + konstantI + " | kD:" + konstantD + " | kF:" + konstantF + " | VAL:" + lAxis + " | %:" + _talon.GetMotorOutputPercent() + " | D:" + lAxis * 4000f + " | A:" + _talon.GetSelectedSensorVelocity());
 
-                Debug.Print("" + lAxis * 4000f + "\t" + _talon.GetSelectedSensorVelocity() + "\t" + _talon.GetMotorOutputPercent());
+                Debug.Print("" + (lAxis * maxRPM) + "\t" + _talon.GetSelectedSensorVelocity(0) / (float)kTicksPerRotation * 10 + "\t" + _talon.GetMotorOutputPercent());
 
-                _talon.Set(ControlMode.Velocity, lAxis * 4000f);
-                //_talon.Set(ControlMode.PercentOutput, lAxis);
+                if (_talon.GetSelectedSensorVelocity() > velocity);
+                {
+                    _talon.Set(ControlMode.Velocity, velocity);
+                }
+                //_talon.Set(ControlMode.PercentOutput, lAxis/2);
                 if (_gamepad.GetButton(6))
                 {
-                    _talon.Set(ControlMode.PercentOutput, 1);
+                    _talon.Set(ControlMode.PercentOutput, 0);
                 }
 
                 //_talon.Set(ControlMode.PercentOutput, _gamepad.GetAxis(3) * 0.3f);
