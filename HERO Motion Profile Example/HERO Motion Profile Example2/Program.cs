@@ -217,7 +217,7 @@ namespace HERO_Motion_Profile_Example
                     lAxis = 0;
                 }
 
-                int maxRPM = 30;//RPM
+                int maxRPM = 60; //RPM
                 int velocity = (int)(lAxis * maxRPM * (float)kTicksPerRotation / 600.0 * 60);
 
                 //Debug.Print("kP:" + konstantP + " | kI:" + konstantI + " | kD:" + konstantD + " | kF:" + konstantF + " | VAL:" + lAxis + " | %:" + _talon.GetMotorOutputPercent() + " | D:" + lAxis * 4000f + " | A:" + _talon.GetSelectedSensorVelocity());
