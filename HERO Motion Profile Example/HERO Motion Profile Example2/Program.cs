@@ -123,6 +123,9 @@ namespace HERO_Motion_Profile_Example
         int _timeToPrint = 0;
         int _timeToColumns = 0;
         const int kTicksPerRotation = 4096;
+
+        const int falcon500ticksPerRotation = 2048;
+
         bool oneshot = false;
         bool[] brakeFlag = new bool[HERO_Motion_Profile_Example.MotionProfile.kNumPoints];
 
@@ -212,14 +215,14 @@ namespace HERO_Motion_Profile_Example
                 double dTime = HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex];
                 double dVelocity = HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex];
                 double interpolatedSpeed = (timer.DurationMs - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex]) * dVelocity / dTime;
-                double tickSpeed = (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) * (float)kTicksPerRotation / 600.0 * 60;
+                double tickSpeed = (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) * (float)falcon500ticksPerRotation / 600.0 * 60;
                 
                 short printMode = 2; // 0 is none, 1 is complex, 2 is graph-printing
                 if (printMode == 1)
                 {
-                    Debug.Print("[" + timer.DurationMs / 1000.0 + "s] " + "dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tactual: " + _talon.GetSelectedSensorVelocity(0) / (float)kTicksPerRotation * 10 + "\tpointIndex[" + pointIndex + "]\tsentTps: " + tickSpeed + "\tpowerOut: " + _talon.GetMotorOutputPercent() + "brakePercent: " + ((float)dVelocity/dTime * -50) );
+                    Debug.Print("[" + timer.DurationMs / 1000.0 + "s] " + "dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tactual: " + _talon.GetSelectedSensorVelocity(0) / (float)falcon500ticksPerRotation * 10 + "\tpointIndex[" + pointIndex + "]\tsentTps: " + tickSpeed + "\tpowerOut: " + _talon.GetMotorOutputPercent() + "brakePercent: " + ((float)dVelocity/dTime * -50) );
                 }else if(printMode == 2){
-                    Debug.Print("" + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\t" + _talon.GetSelectedSensorVelocity(0) / (float)kTicksPerRotation * 10 + "\t" + _talon.GetMotorOutputPercent());
+                    Debug.Print("" + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\t" + _talon.GetSelectedSensorVelocity(0) / (float)falcon500ticksPerRotation * 10 + "\t" + _talon.GetMotorOutputPercent());
                 }
 
                 if (!brakeToggle)
