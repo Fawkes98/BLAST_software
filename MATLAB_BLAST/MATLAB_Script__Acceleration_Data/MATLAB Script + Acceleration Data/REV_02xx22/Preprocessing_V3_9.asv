@@ -181,9 +181,8 @@ omega_Mproc = G.*omega_proc;
 %% Point Selection
 Vec_trunk = []; iii = 0; %
 dW_dy = diff(omega_Mproc); %plot changing values
-dW_dyy = diff(dW_dy);
 for ii = 2:(length(dW_dy))
-    if (sign(dW_dy(ii-1)) ~= sign(dW_dy(ii)) || (false && (abs(dW_dyy(ii - 1)) > 0.01)) ) %checking difference - local max/min
+    if (sign(dW_dy(ii-1)) ~= sign(dW_dy(ii)) || abs(dW_dy(ii - 1) - dW_dy(ii + 3)) > 0.01 ) %checking difference - local max/min
         iii = iii + 1;
         Vec_trunk(iii, 1) = (ii-1)*dt; %timestep by time for spec. vel.
         Vec_trunk(iii, 2) = omega_Mproc(ii-1); %velocity capture

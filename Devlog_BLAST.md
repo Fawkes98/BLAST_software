@@ -260,7 +260,7 @@ Maybe there's a way to safely overclock the motor, or use this "Voltage Compensa
 
 Need to show Zach, make sure its actually below what we need, because if we need faster this is going to be a problem.
 
-# Thursday 12/2/2022
+# Friday 12/2/2022
 
 ### Software - Anshal
 
@@ -271,3 +271,28 @@ Looked around in the CTRE docs, and turns out the ticks per rotation is 2048, no
 Changing this set the max speed to about 80, 81 rpm
 
 After confirming with Maziar and Zach, this is enough to get us about 10gs, but optimally we don't need to go that high, since the acceleration to get us there is pretty mid.
+
+# Monday 12/12/2022
+
+### Software - Anshal
+
+Basically just calculated a formula for the RPM as a function of Gs
+
+$$
+\frac{30}{pi}\sqrt{\frac{9.81g}{r}}
+$$
+
+Where r is the length of the arm in meters (1.5)
+
+I've set up the profile that runs 1g-5g, taking 5 seconds to ramp and 15 seconds to stay at each value
+
+Ready to be run, need to be up at 8am on Wednesday incase technical problems occur.
+
+Also today, I tried to work on the matlab point-generation code. Need to find the actual term for what we're trying to do, so I can find a good algorithm for it. Helpful photo:
+<img src="file:///C:/Users/User/AppData/Roaming/marktext/images/2022-12-12-12-49-19-image.png" title="" alt="" width="207">
+
+Maybe anti-aliasing? After looking up what it is, though, it doesn't seem like the right term.
+
+Need to find where the jerk peaks for points, and perhaps a minimum point every so many seconds, to keep it accurate.
+Also need to check memory, need to see exactly how much memory we are alloted and how many points we can go up to. Will be best if we aim for 80-90% of the capacity, just in case.
+Doubles are also quite large as data points, perhaps we change it to floats, depends.
