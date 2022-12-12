@@ -329,7 +329,7 @@ legend("Original", "Processed", "Braking Section", "location", "north")
 figure(3); hold on; grid on;
 plot(t, omega_Mraw, 'k', 'linewidth', 2)
 plot(t, omega_Mproc, 'r', 'linewidth', 2)
-plot(Vec_trunk(:, 1), Vec_trunk(:, 2), 'g', 'linewidth', 2)
+plot(Vec_trunk(:, 1), Vec_trunk(:, 2), 'g', 'linewidth', 2) %ASK IF OK
 title("Motor: Angular Speed")
 xlabel("Time (s)")
 ylabel("\omega (rad/s)")
@@ -419,6 +419,7 @@ j_ang_rmse = rmse(j_ang_raw, j_ang_proc);
 
 % data format = [time (s), postion (rotations), angular speed (RPM), brake flag (0/1)]
 Data_Out = [t' theta_Mproc' omega_Mproc' brakes'];
+Data_Trunk_Out = [Vec_trunk(:, 1)' Vec_trunk(:, 2)'];
 %writematrix(Data_Out, "Processed_Profile.csv")
 
 %% Hard-coding Processed Profile to MotionProfile.cs
