@@ -259,3 +259,15 @@ Further tests have led me to full send the motor, and to me it seems that the ou
 Maybe there's a way to safely overclock the motor, or use this "Voltage Compensation" option.
 
 Need to show Zach, make sure its actually below what we need, because if we need faster this is going to be a problem.
+
+
+
+# Thursday 12/2/2022
+
+### Software - Anshal
+
+ Could not figure out what was wrong with either the motor or the calculations. Maziar ran a manual visual test of the rpm (Counted rotations in a minute), and found that the rpm was about double what I expected. 
+ 
+Looked around in the CTRE docs, and turns out the ticks per rotation is 2048, not 4096. For some reason that constant was incorrect in the code beforehand. 
+ 
+ Changing this set the max speed to about 80, 81 rpm
