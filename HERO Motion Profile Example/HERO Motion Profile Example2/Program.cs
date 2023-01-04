@@ -230,16 +230,16 @@ namespace HERO_Motion_Profile_Example
                     _talon.Set(ControlMode.Velocity, tickSpeed);
                 }
 
-                if(dVelocity / dTime < -brakeThreshold && brakeToggle == false)
+                if(HERO_Motion_Profile_Example.MotionProfile.brakeTime[pointIndex] != 0)
                 {
                     StartBraking();
                 }
-                else if (dVelocity / dTime > -brakeThreshold && brakeToggle == true)
+                else if (HERO_Motion_Profile_Example.MotionProfile.brakeTime[pointIndex] == 0)
                 {
                     StopBraking();
                 }
 
-                brake((double)dVelocity * -25.0/dTime);
+                brake(pointIndex);
 
                 CTRE.Phoenix.Watchdog.Feed();
                 if (timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1])
@@ -259,13 +259,16 @@ namespace HERO_Motion_Profile_Example
             }
         }
         
-        public void brake(double percent){ //0 to 1, double
+        public void brake(int pointIndex){ //0 to 1, double
             if(brakeToggle){
+                
                 long currentTime = timer.DurationMs;
                 long dTime = currentTime - brakeTimeStart;
+                double brake_cycle_period = dTime/HERO_Motion_Profile_Example.MotionProfile.brakeCount[pointIndex];
+                double percent = (HERO_Motion_Profile_Example.MotionProfile.brakeTime[pointIndex] * HERO_Motion_Profile_Example.MotionProfile.brakeCount[pointIndex]) / dTime;
 
-                long timeInPeriod = dTime % DUTY_CYCLE_PERIOD;
-                if(((double)timeInPeriod / DUTY_CYCLE_PERIOD) < percent){
+                long timeInPeriod = dTime % brake_cycle_period;
+                if(((double)timeInPeriod / brake_cycle_period) < percent){
                     brakeSSR.Write(false);
                     //Debug.Print("On " + timeInPeriod + " %:" + percent);
                 }else{
