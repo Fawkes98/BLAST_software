@@ -15,6 +15,7 @@ clear all; close all; clc;
 % - Velocity Profile Conversion:
 %   - calculate raw (clipped) angular velocity
 %   - calculate processed angular velocity
+% - Truncation of Vector profile
 % - Postion Calculation:
 %   - calculate raw position
 %   - calculate processed position
@@ -47,6 +48,7 @@ clear all; close all; clc;
 %   - first derivative
 %   - second derivative
 %   - root mean square error
+
 
 % ---------- Script Parameters ---------- %%
 % constants
@@ -188,7 +190,54 @@ end
 % Angular Velocity as seen by motor
 omega_Mproc = G.*omega_proc;
 
+%% Point Selection
+Vec_trunk = []; iii = 0; %
+dW_dy = diff(omega_Mproc); %plot changing values
+dW_dyy = diff(dW_dy);
+for ii = 2:(length(dW_dy))
+    if (sign(dW_dy(ii-1)) ~= sign(dW_dy(ii)) || (false && (abs(dW_dyy(ii - 1)) > 0.01)) ) %checking difference - local max/min
+        iii = iii + 1;
+        Vec_trunk(iii, 1) = (ii-1)*dt; %timestep by time for spec. vel.
+        Vec_trunk(iii, 2) = omega_Mproc(ii-1); %velocity capture
+    end
+end
 
+
+%% ---------- Position Profile Conversion ---------- %%
+%% Calculate Raw Position
+% % Euler approx (LHS Reimann Sum Approx)
+% 
+% % Angular Position experienced by arm
+% theta_raw = [0]; % initial condition
+% for i = 2:length(omega_raw)
+%     theta_raw(i) = theta_raw(i-1) + (omega_raw(i-1)*dt); % (rads)
+% end
+% theta_raw = theta_raw/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
+% 
+% % Angular Position experienced by motor
+% theta_Mraw = [0];
+% for i = 2:length(omega_Mraw)
+%     theta_Mraw(i) = theta_Mraw(i-1) + (omega_Mraw(i-1)*dt); % (rads)
+% end
+% theta_Mraw = theta_Mraw/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
+% 
+% 
+% %% Calculate Processed Position
+% % Euler approx (LHS Reimann Sum Approx)
+% 
+% % Angular Position experienced by arm
+% theta_proc = [0]; % initial condition
+% for i = 2:length(omega_proc)
+%     theta_proc(i) = theta_proc(i-1) + (omega_proc(i-1)*dt); % (rads)
+% end
+% theta_proc = theta_proc/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
+% 
+% % Angular Position experienced by motor
+% theta_Mproc = [0];
+% for i = 2:length(omega_Mproc)
+%     theta_Mproc(i) = theta_Mproc(i-1) + (omega_Mproc(i-1)*dt); % (rads)
+% end
+% theta_Mproc = theta_Mproc/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
 
 
 %% ---------- Brake Flagging ---------- %%
@@ -293,8 +342,9 @@ ylabel("\omega (rad/s)")
 legend("Original", "Processed", "Braking Section", "location", "north")
 
 figure(3); hold on; grid on;
-plot(t, omega_Mraw, 'k', 'linewidth', 2)
-plot(t, omega_Mproc, 'r', 'linewidth', 2)
+plot(t, omega_Mraw, 'k', 'linewidth', 2)  %Raw angular velocity
+plot(t, omega_Mproc, 'r', 'linewidth', 2) %processed angular velocity
+plot(Vec_trunk(:, 1), Vec_trunk(:, 2), 'g', 'linewidth', 2) %Truncated
 title("Motor: Angular Speed")
 xlabel("Time (s)")
 ylabel("\omega (rad/s)")
@@ -302,23 +352,23 @@ legend("Original", "Processed", "location", "north")
 
 %% Original and Processed Angular Position
 
-figure(4)
-hold on
-grid on
-plot(t, theta_raw, "k", "linewidth", 2)
-plot(t, theta_proc, "r", "linewidth", 2)
-title("Arm: Angular Position")
-xlabel("Time (s)")
-ylabel("Position (rotations, 2\pi rads)")
-legend("Original", "Processed", "location", "north")
-
-figure(5); hold on; grid on;
-plot(t, theta_Mraw, "k", "linewidth", 2)
-plot(t, theta_Mproc, "r", "linewidth", 2)
-title("Motor: Angular Position")
-xlabel("Time (s)")
-ylabel("Position (rotations, 2\pi rads)")
-legend("Original", "Processed", "location", "north")
+% figure(4)
+% hold on
+% grid on
+% plot(t, theta_raw, "k", "linewidth", 2)
+% plot(t, theta_proc, "r", "linewidth", 2)
+% title("Arm: Angular Position")
+% xlabel("Time (s)")
+% ylabel("Position (rotations, 2\pi rads)")
+% legend("Original", "Processed", "location", "north")
+% 
+% figure(5); hold on; grid on;
+% plot(t, theta_Mraw, "k", "linewidth", 2)
+% plot(t, theta_Mproc, "r", "linewidth", 2)
+% title("Motor: Angular Position")
+% xlabel("Time (s)")
+% ylabel("Position (rotations, 2\pi rads)")
+% legend("Original", "Processed", "location", "north")
 
 % %sanity test
 % figure(6)

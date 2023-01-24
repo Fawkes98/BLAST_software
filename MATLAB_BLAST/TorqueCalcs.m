@@ -1,9 +1,9 @@
 clear all; close all; clc;
 
 %% Variables - Changable/Desired
- G = 6;                 % grav. coefficient
- t = 2;                % [s] stopping-time
- omega1 = 4*pi          % [rad/s] specified arm angular velocity
+ G = 0;                 % grav. coefficient
+ t = .1;                  % [s] stopping-time
+ omega1 = 8.901;         % [rad/s] specified arm angular velocity
                         % NOTE: if want max torque based on Gs, set to '0'
  
 
@@ -21,11 +21,12 @@ clear all; close all; clc;
     Iyy_hex = 0;        % [kg(m^2)] hex shaft
 
     %hex shaft
-    hex = .5;           % [in] face-to-face diameter of hex shaft
-    d_hex = hex*.0254;  % [m] face-to-face diameter of hex shaft
-    r_hex = d_hex/2;    % [m] center-to-face radius (shortest) of hex shaft
-    J = .12*(d_hex^4);  % [m^4] Polar moment of inertia for hex section (https://www.engineersedge.com/polar-moment-inertia.htm)
-    
+    hex = .5;                   % [in] face-to-face diameter of hex shaft
+    shaft = 1;                  % [in] diameter of main keyed shaft
+    d_hex = hex*.0254;          % [m] face-to-face diameter of hex shaft
+    r_hex = d_hex/2;            % [m] center-to-face radius (shortest) of hex shaft
+    J = .12*(d_hex^4);          % [m^4] Polar moment of inertia for hex section (https://www.engineersedge.com/polar-moment-inertia.htm)
+    Js = (pi/2)*((shaft/2)^4);  % [m^4] Polar moment of inertia for shaft
     
   % Calculated
     % solve for omega based on desired Gs
@@ -40,5 +41,6 @@ T = (Iyy_s + Iyy_a + Iyy_cw + Iyy_ex)*(omega1/t) % (neg)[N*m]
 
 
 %% Finding stress on shaft (assum. no amp torque or mean moment)
-Tau_m = (T*r_hex)/J     % [N/(m^2)]
-Sig_a = Tau_m           % [N/(m^2)] due to no other applied bending moment (principal stress eq)
+% Tau_mHEX = (T*r_hex)/J       % Shear felt by hex shaft [N/(m^2)]
+% Sig_a = Tau_mHEX             % [N/(m^2)] due to no other applied bending moment (principal stress eq)
+Tau_mSFT = (T*(shaft/2))/Js  % Shear felt by main keyed shaft [N/(m^2)]
