@@ -32,6 +32,8 @@ using Microsoft.SPOT.Hardware;
 using System.Text;
 using System.Threading;
 
+
+
 namespace HERO_Motion_Profile_Example
 {
 
@@ -89,6 +91,7 @@ namespace HERO_Motion_Profile_Example
     //        //}
 
     //    }
+
 
     public class Program
     {
@@ -198,7 +201,7 @@ namespace HERO_Motion_Profile_Example
                 //_sb.Append(Ready);
                 //Debug.Print(_sb.ToString());
 
-                Ready = digitalInKey.Read();
+                Ready = _gamepad.GetButton(4);//digitalInKey.Read();
 
                 if (Ready)
                 {
@@ -209,19 +212,29 @@ namespace HERO_Motion_Profile_Example
 
             //  StopBraking();
             /* loop forever */
+
+            bool manualBrakeMode = false;
+            bool pastButton = false;
+
             timer.Start();
             while (true)
             {
+                if (!pastButton && _gamepad.GetButton(5))
+                {
+                    manualBrakeMode = !manualBrakeMode;
+                }
+                pastButton = _gamepad.GetButton(5);
+
                 double dTime = HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex];
                 double dVelocity = HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex + 1] - HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex];
                 double interpolatedSpeed = (timer.DurationMs - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex]) * dVelocity / dTime;
                 double tickSpeed = (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) * (float)falcon500ticksPerRotation / 600.0 * 60;
-                
+
                 short printMode = 2; // 0 is none, 1 is complex, 2 is graph-printing
                 if (printMode == 1)
                 {
-                    Debug.Print("[" + timer.DurationMs / 1000.0 + "s] " + "dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tactual: " + _talon.GetSelectedSensorVelocity(0) / (float)falcon500ticksPerRotation * 10 + "\tpointIndex[" + pointIndex + "]\tsentTps: " + tickSpeed + "\tpowerOut: " + _talon.GetMotorOutputPercent() + "brakePercent: " + ((float)dVelocity/dTime * -50) );
-                }else if(printMode == 2){
+                    Debug.Print("[" + timer.DurationMs / 1000.0 + "s] " + "dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tactual: " + _talon.GetSelectedSensorVelocity(0) / (float)falcon500ticksPerRotation * 10 + "\tpointIndex[" + pointIndex + "]\tsentTps: " + tickSpeed + "\tpowerOut: " + _talon.GetMotorOutputPercent() + "brakePercent: " + ((float)dVelocity / dTime * -50));
+                } else if (printMode == 2) {
                     Debug.Print("" + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\t" + _talon.GetSelectedSensorVelocity(0) / (float)falcon500ticksPerRotation * 10 + "\t" + _talon.GetMotorOutputPercent());
                 }
 
@@ -229,19 +242,37 @@ namespace HERO_Motion_Profile_Example
                 {
                     _talon.Set(ControlMode.Velocity, tickSpeed);
                 }
-
-                if(HERO_Motion_Profile_Example.MotionProfile.brakeTime[pointIndex] != 0)
+                if (!manualBrakeMode)
                 {
-                    StartBraking();
+                    if (HERO_Motion_Profile_Example.MotionProfile.brakeTime[pointIndex] != 0)
+                    {
+                        StartBraking();
+                    }
+                    else if (HERO_Motion_Profile_Example.MotionProfile.brakeTime[pointIndex] == 0)
+                    {
+                        StopBraking();
+                    }
                 }
-                else if (HERO_Motion_Profile_Example.MotionProfile.brakeTime[pointIndex] == 0)
+                else
                 {
-                    StopBraking();
+                    if (_gamepad.GetButton(2))
+                    {
+                        StartBraking();
+                        brakeSSR.Write(false);
+                    }
+                    else if (!_gamepad.GetButton(2))
+                    {
+                        StopBraking();
+                        brakeSSR.Write(true);
+                    }
                 }
 
-                brake(pointIndex);
+                if (!manualBrakeMode) { 
+                    brake(pointIndex);
+                }
 
                 CTRE.Phoenix.Watchdog.Feed();
+
                 if (timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1])
                 {
                     pointIndex += 1;
@@ -261,19 +292,25 @@ namespace HERO_Motion_Profile_Example
         
         public void brake(int pointIndex){ //0 to 1, double
             if(brakeToggle){
-                
+                int brakeTime = HERO_Motion_Profile_Example.MotionProfile.brakeTime[pointIndex];
+                short brakeCount = HERO_Motion_Profile_Example.MotionProfile.brakeCount[pointIndex];
+                long sectionDuration = HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex+1] - HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex];
+
                 long currentTime = timer.DurationMs;
                 long dTime = currentTime - brakeTimeStart;
-                double brake_cycle_period = dTime/HERO_Motion_Profile_Example.MotionProfile.brakeCount[pointIndex];
-                double percent = (HERO_Motion_Profile_Example.MotionProfile.brakeTime[pointIndex] * HERO_Motion_Profile_Example.MotionProfile.brakeCount[pointIndex]) / dTime;
+                long brakeCyclePeriod = sectionDuration / brakeCount;
+                //double percent = (double)(HERO_Motion_Profile_Example.MotionProfile.brakeTime[pointIndex] * (int)HERO_Motion_Profile_Example.MotionProfile.brakeCount[pointIndex]) / HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex];
 
-                long timeInPeriod = dTime % brake_cycle_period;
-                if(((double)timeInPeriod / brake_cycle_period) < percent){
+                long timeInPeriod = dTime % brakeCyclePeriod;
+                Debug.Print("timeInPeriod: " + timeInPeriod + " | brakeTime: " + brakeTime + " | brakeCyclePeriod: " + brakeCyclePeriod + " | sectionDuration: " + sectionDuration);
+                //Debug.Print("timeInPeriod: " + timeInPeriod + " | inPeriodPercent: " + ((double)timeInPeriod / brakeCyclePeriod) + " | brakeCyclePeriod: " + brakeCyclePeriod);
+                if (timeInPeriod < brakeTime)
+                {
                     brakeSSR.Write(false);
-                    //Debug.Print("On " + timeInPeriod + " %:" + percent);
+                    Debug.Print("On " + timeInPeriod + " %:" + brakeTime);
                 }else{
                     brakeSSR.Write(true);
-                    //Debug.Print("Off " + timeInPeriod + " %:" + percent);
+                    Debug.Print("Off " + timeInPeriod + " %:" + brakeTime);
                 }
             }
         }       
@@ -281,12 +318,16 @@ namespace HERO_Motion_Profile_Example
         //here's where we actually cause the braking to occur
         public void StartBraking()
         {
+            if(brakeToggle == false)
+            {
+                brakeTimeStart = timer.DurationMs;
+            }
             brakeToggle = true;
             //Debug.Print("HALT");
 
-            brakeTimeStart = timer.DurationMs;
+            
 
-            brakeSSR.Write(false); //WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
+            //brakeSSR.Write(false); //WHEN YOU ENABLE THIS, REMEMBER TO MAKE MOTOR COAST DURING THIS PART
             _talon.Set(ControlMode.PercentOutput,0);
         }
 
@@ -296,7 +337,7 @@ namespace HERO_Motion_Profile_Example
             brakeToggle = false;
             //Debug.Print("STOP HALTING");
 
-            brakeSSR.Write(true); //WHEN YOU ENABLE THIS, REMEMBER TO STOP MOTOR COAST DURING THIS PART
+            //brakeSSR.Write(true); //WHEN YOU ENABLE THIS, REMEMBER TO STOP MOTOR COAST DURING THIS PART
         }
 
 
