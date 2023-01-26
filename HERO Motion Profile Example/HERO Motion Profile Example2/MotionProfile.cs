@@ -13,17 +13,17 @@ namespace HERO_Motion_Profile_Example
         {
             0,
             5000,
-            15000,
             25000,
             30000,
+            35000,
             1000000,
         };
 
         public static double[] velocityArray = new double[] //rpm
         {
             0,
-            50,
-            50,
+            20,
+            20,
             0,
             0,
             0
