@@ -135,6 +135,8 @@ namespace HERO_Motion_Profile_Example
         private GameController _gamepad = new GameController(UsbHostDevice.GetInstance(0));
 
         OutputPort brakeSSR = new OutputPort(CTRE.HERO.IO.Port5.Pin5, false);
+        bool reflectiveBrakeState = false;
+
         bool brakeToggle = false;
         double brakeThreshold = 0;
 
@@ -216,6 +218,9 @@ namespace HERO_Motion_Profile_Example
             bool manualBrakeMode = false;
             bool pastButton = false;
 
+            reflectiveBrakeState = true;
+            brakeSSR.Write(true);
+
             timer.Start();
             while (true)
             {
@@ -235,7 +240,7 @@ namespace HERO_Motion_Profile_Example
                 {
                     Debug.Print("[" + timer.DurationMs / 1000.0 + "s] " + "dTime:" + dTime + "\tdVelocity: " + dVelocity + "\tinterpolated: " + interpolatedSpeed + "\tdesired: " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\tactual: " + _talon.GetSelectedSensorVelocity(0) / (float)falcon500ticksPerRotation * 10 + "\tpointIndex[" + pointIndex + "]\tsentTps: " + tickSpeed + "\tpowerOut: " + _talon.GetMotorOutputPercent() + "brakePercent: " + ((float)dVelocity / dTime * -50));
                 } else if (printMode == 2) {
-                    Debug.Print("" + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\t" + _talon.GetSelectedSensorVelocity(0) / (float)falcon500ticksPerRotation * 10 + "\t" + _talon.GetMotorOutputPercent());
+                    Debug.Print("" + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + "\t" + _talon.GetSelectedSensorVelocity(0) / (float)falcon500ticksPerRotation * 10 + "\t" + _talon.GetMotorOutputPercent() + "\t" + (reflectiveBrakeState ? 0 : 1));
                 }
 
                 if (!brakeToggle)
@@ -255,14 +260,22 @@ namespace HERO_Motion_Profile_Example
                 }
                 else
                 {
-                    if (_gamepad.GetButton(2))
+                    if (_gamepad.GetButton(6) || _gamepad.GetButton(2))
                     {
                         StartBraking();
+                    }
+                    else
+                    {
+                        StopBraking();
+                    }
+                    if (_gamepad.GetButton(2))
+                    {
+                        reflectiveBrakeState = false;
                         brakeSSR.Write(false);
                     }
                     else if (!_gamepad.GetButton(2))
                     {
-                        StopBraking();
+                        reflectiveBrakeState = true;
                         brakeSSR.Write(true);
                     }
                 }
@@ -302,15 +315,17 @@ namespace HERO_Motion_Profile_Example
                 //double percent = (double)(HERO_Motion_Profile_Example.MotionProfile.brakeTime[pointIndex] * (int)HERO_Motion_Profile_Example.MotionProfile.brakeCount[pointIndex]) / HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex];
 
                 long timeInPeriod = dTime % brakeCyclePeriod;
-                Debug.Print("timeInPeriod: " + timeInPeriod + " | brakeTime: " + brakeTime + " | brakeCyclePeriod: " + brakeCyclePeriod + " | sectionDuration: " + sectionDuration);
+                //Debug.Print("timeInPeriod: " + timeInPeriod + " | brakeTime: " + brakeTime + " | brakeCyclePeriod: " + brakeCyclePeriod + " | sectionDuration: " + sectionDuration);
                 //Debug.Print("timeInPeriod: " + timeInPeriod + " | inPeriodPercent: " + ((double)timeInPeriod / brakeCyclePeriod) + " | brakeCyclePeriod: " + brakeCyclePeriod);
                 if (timeInPeriod < brakeTime)
                 {
+                    reflectiveBrakeState = false;
                     brakeSSR.Write(false);
-                    Debug.Print("On " + timeInPeriod + " %:" + brakeTime);
+                    //Debug.Print("On " + timeInPeriod + " %:" + brakeTime);
                 }else{
+                    reflectiveBrakeState = true;
                     brakeSSR.Write(true);
-                    Debug.Print("Off " + timeInPeriod + " %:" + brakeTime);
+                    //Debug.Print("Off " + timeInPeriod + " %:" + brakeTime);
                 }
             }
         }       
@@ -320,7 +335,10 @@ namespace HERO_Motion_Profile_Example
         {
             if(brakeToggle == false)
             {
+                //Debug.Print("BEGIN HALT");
                 brakeTimeStart = timer.DurationMs;
+                reflectiveBrakeState = false;
+                brakeSSR.Write(false);
             }
             brakeToggle = true;
             //Debug.Print("HALT");
@@ -334,6 +352,12 @@ namespace HERO_Motion_Profile_Example
         //here's where we remove the brake;
         public void StopBraking()
         {
+            if(brakeToggle == true)
+            {
+                //Debug.Print("STOP HALTING");
+                reflectiveBrakeState = true;
+                brakeSSR.Write(true);
+            }
             brakeToggle = false;
             //Debug.Print("STOP HALTING");
 

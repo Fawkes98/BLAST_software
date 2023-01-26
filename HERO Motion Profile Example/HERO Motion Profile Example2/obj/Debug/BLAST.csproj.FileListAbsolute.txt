@@ -108,7 +108,6 @@ G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Ex
 G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Example\HERO Motion Profile Example2\bin\Debug\be\BOARDS Launch Acceleration Simulation Tool.pe
 G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Example\HERO Motion Profile Example2\bin\Debug\be\BOARDS Launch Acceleration Simulation Tool.pdbx
 G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Example\HERO Motion Profile Example2\obj\Debug\BLAST.csproj.AssemblyReference.cache
-G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Example\HERO Motion Profile Example2\obj\Debug\TinyCLR_DebugReferences.cache
 G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Example\HERO Motion Profile Example2\obj\Debug\BLAST.csproj.CoreCompileInputs.cache
 G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Example\HERO Motion Profile Example2\obj\Debug\be\BOARDS Launch Acceleration Simulation Tool.pe
 G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Example\HERO Motion Profile Example2\obj\Debug\be\BOARDS Launch Acceleration Simulation Tool.pdbx
@@ -120,3 +119,4 @@ G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Ex
 G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Example\HERO Motion Profile Example\obj\Debug\TinyCLR_DebugReferences.cache
 G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Example\HERO Motion Profile Example\obj\Debug\BLAST.csproj.CoreCompileInputs.cache
 G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Example\HERO Motion Profile Example\obj\Debug\BOARDS Launch Acceleration Simulation Tool.exe
+G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\HERO Motion Profile Example\HERO Motion Profile Example2\obj\Debug\TinyCLR_DebugReferences.cache
