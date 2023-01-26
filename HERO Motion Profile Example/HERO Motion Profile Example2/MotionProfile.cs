@@ -13,32 +13,22 @@ namespace HERO_Motion_Profile_Example
         {
             0,
             5000,
-            20000,
+            15000,
             25000,
-            40000,
+            30000,
             45000,
-            60000,
-            65000,
-            80000,
-            85000,
-            100000,
-            105000
+            100000
 
         };
 
         public static double[] velocityArray = new double[] //rpm
         {
             0,
-            24.420,
-            24.420,
-            34.536,
-            34.536,
-            42.298,
-            42.298,
-            48.841,
-            48.841,
-            54.606,
-            54.606,
+            15,
+            15,
+            0,
+            0,
+            0,
             0
         };
         public static bool[] brakeFlag = new bool[]
