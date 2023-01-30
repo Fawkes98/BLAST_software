@@ -5,25 +5,9 @@ clear all; close all; clc;
 % ---------- Script Outline ---------- %%
 % - Input:
 %   - launch prof
-ans =
-
-   31.8310
-
->> (200*10)/(pi/4)
-
-ans =
-
-   2.5465e+03ile filepath
 %                                               - (CHECK FOR CREDIBILITY)
 %                                               - (FIX/INTERPOLATE given rand prof?)
-
-    3.9789
-
->> 100/pi
-
-ans =
-
-   31.8310%   - smoothing factor
+%   - smoothing factor
 % - Acceleration Procesing:
 %   - interpolate data
 %   - clip max and min accelerations
@@ -31,15 +15,6 @@ ans =
 % - Velocity Profile Conversion:
 %   - calculate raw (clipped) angular velocity
 %   - 
-
-ans =
-
-   2.5465e+03
-
->> (200*6)/pi
-
-ans =
-calculate processed angular velocity
 % - Postion Calculation:
 %   - calculate raw position
 %   - calculate processed position
