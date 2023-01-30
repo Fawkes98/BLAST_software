@@ -252,7 +252,7 @@ namespace HERO_Motion_Profile_Example
                 //{
                 //    Debug.Print(""+ (_talon.GetSelectedSensorVelocity(0) / (float)falcon500ticksPerRotation * 10) + " - " + (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed) + " = " + (_talon.GetSelectedSensorVelocity(0) / (float)falcon500ticksPerRotation * 10 - (HERO_Motion_Profile_Example.MotionProfile.velocityArray[pointIndex] + interpolatedSpeed)));
                 //}
-                brake((0.19 * velocityDiff) + ((double)dVelocity * -30 / (dTime)));
+                brake((0.25 * velocityDiff) + ((double)dVelocity * -30 / (dTime)));
 
                 CTRE.Phoenix.Watchdog.Feed();
                 if (timer.DurationMs > HERO_Motion_Profile_Example.MotionProfile.timeArray[pointIndex + 1])
