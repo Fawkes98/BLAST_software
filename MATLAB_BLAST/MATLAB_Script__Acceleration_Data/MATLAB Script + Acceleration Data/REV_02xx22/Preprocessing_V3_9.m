@@ -190,6 +190,9 @@ for ii = 2:(length(dW_dy))
     end
 end
 
+%% Point Selection - Manual
+Manual = importdata("G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\MATLAB_BLAST\MATLAB_Script__Acceleration_Data\MATLAB Script + Acceleration Data\REV_02xx22\Data_POISelectVelocity.csv");
+
 
 %% ---------- Position Profile Conversion ---------- %%
 %% Calculate Raw Position
@@ -322,16 +325,17 @@ hold on
 grid on
 plot(t, omega_raw, "k", "linewidth", 2)
 plot(t, omega_proc, "r", "linewidth", 2)
-plot(t(brakes == 1), omega_proc(brakes == 1), ".b", "markersize", 10) 
+plot(t(brakes == 1), omega_proc(brakes == 1), ".b", "markersize", 10)
+plot(Manual(:, 1), Manual(:, 2), 'g', 'linewidth', 2)
 title("Arm: Angular Speed")
 xlabel("Time (s)")
 ylabel("\omega (rad/s)")
-legend("Original", "Processed", "Braking Section", "location", "north")
+legend("Original", "Processed", "Braking Section", 'Manual', "location", "north")
 
 figure(3); hold on; grid on;
 plot(t, omega_Mraw, 'k', 'linewidth', 2)
 plot(t, omega_Mproc, 'r', 'linewidth', 2)
-plot(Vec_trunk(:, 1), Vec_trunk(:, 2), 'g', 'linewidth', 2) %ASK IF OK
+plot(Vec_trunk(:, 1), Vec_trunk(:, 2), 'c', 'linewidth', 2) %ASK IF OK
 title("Motor: Angular Speed")
 xlabel("Time (s)")
 ylabel("\omega (rad/s)")

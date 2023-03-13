@@ -1,10 +1,12 @@
 %% BLAST MATLAB Preprocessing
-% Version 3.4 (added output)
+% Version 4 (Manual curve fit & printing)
+
+% ADD PRINTING
 clear all; close all; clc;
 
 % ---------- Script Outline ---------- %%
 % - Input:
-%   - launch profile filepath
+%   - launch prof
 %                                               - (CHECK FOR CREDIBILITY)
 %                                               - (FIX/INTERPOLATE given rand prof?)
 %   - smoothing factor
@@ -14,8 +16,7 @@ clear all; close all; clc;
 %   - smooth acceleration
 % - Velocity Profile Conversion:
 %   - calculate raw (clipped) angular velocity
-%   - calculate processed angular velocity
-% - Truncation of Vector profile
+%   - 
 % - Postion Calculation:
 %   - calculate raw position
 %   - calculate processed position
@@ -48,7 +49,6 @@ clear all; close all; clc;
 %   - first derivative
 %   - second derivative
 %   - root mean square error
-
 
 % ---------- Script Parameters ---------- %%
 % constants
@@ -85,7 +85,8 @@ tau = 3; % (s) filter time constant
     %elseif file = '\'
     end
 % file = "D:\1 School\2 Projects\Blast\Matlab_Preprocessing\Data.csv";
-Data = importdata(file);
+% Data = importdata(file);
+Data = importdata("G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\MATLAB_BLAST\MATLAB_Script__Acceleration_Data\MATLAB Script + Acceleration Data\REV_02xx22\Data.csv");
 t = Data(:,1);
 ax_raw = Data(:,2);
 
@@ -162,17 +163,6 @@ ax_proc = filtfilt(d, ax_clip);
 omega_raw = [];
 for i = 1:length(ax_clip)
     omega_raw(i) = sqrt((ax_clip(i) - g)/(r + b*sqrt(1 - (g/ax_clip(i))^2)));
-    % Check condition for thinning
-    if i > 1
-        if (omega_raw(i) - omega_raw(i-1)) > 1
-
-        elseif (omega_raw(i) - omega_raw(i-1)) < 1
-
-        else % condition of m=1
-
-        end
-    end
-
 end
 
 % Angular Velocity as seen by motor
@@ -184,11 +174,11 @@ omega_Mraw = G.*omega_raw;
 omega_proc = [];
 for i = 1:length(ax_proc)
     omega_proc(i) = sqrt((ax_proc(i) - g)/(r + b*sqrt(1 - (g/ax_proc(i))^2)));
-    % Check condition for thinning
 end
 
 % Angular Velocity as seen by motor
 omega_Mproc = G.*omega_proc;
+
 
 %% Point Selection
 Vec_trunk = []; iii = 0; %
@@ -202,43 +192,45 @@ for ii = 2:(length(dW_dy))
     end
 end
 
+%% Point Selection - Manual
+Manual = importdata("G:\Other computers\My Laptop\__UCSD\_BLAST\BLAST_Software\MATLAB_BLAST\MATLAB_Script__Acceleration_Data\MATLAB Script + Acceleration Data\REV_02xx22\Data_POISelectVelocity.csv");
+
 
 %% ---------- Position Profile Conversion ---------- %%
 %% Calculate Raw Position
-% % Euler approx (LHS Reimann Sum Approx)
-% 
-% % Angular Position experienced by arm
-% theta_raw = [0]; % initial condition
-% for i = 2:length(omega_raw)
-%     theta_raw(i) = theta_raw(i-1) + (omega_raw(i-1)*dt); % (rads)
-% end
-% theta_raw = theta_raw/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
-% 
-% % Angular Position experienced by motor
-% theta_Mraw = [0];
-% for i = 2:length(omega_Mraw)
-%     theta_Mraw(i) = theta_Mraw(i-1) + (omega_Mraw(i-1)*dt); % (rads)
-% end
-% theta_Mraw = theta_Mraw/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
-% 
-% 
-% %% Calculate Processed Position
-% % Euler approx (LHS Reimann Sum Approx)
-% 
-% % Angular Position experienced by arm
-% theta_proc = [0]; % initial condition
-% for i = 2:length(omega_proc)
-%     theta_proc(i) = theta_proc(i-1) + (omega_proc(i-1)*dt); % (rads)
-% end
-% theta_proc = theta_proc/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
-% 
-% % Angular Position experienced by motor
-% theta_Mproc = [0];
-% for i = 2:length(omega_Mproc)
-%     theta_Mproc(i) = theta_Mproc(i-1) + (omega_Mproc(i-1)*dt); % (rads)
-% end
-% theta_Mproc = theta_Mproc/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
+% Euler approx (LHS Reimann Sum Approx)
 
+% Angular Position experienced by arm
+theta_raw = [0]; % initial condition
+for i = 2:length(omega_raw)
+    theta_raw(i) = theta_raw(i-1) + (omega_raw(i-1)*dt); % (rads)
+end
+theta_raw = theta_raw/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
+
+% Angular Position experienced by motor
+theta_Mraw = [0];
+for i = 2:length(omega_Mraw)
+    theta_Mraw(i) = theta_Mraw(i-1) + (omega_Mraw(i-1)*dt); % (rads)
+end
+theta_Mraw = theta_Mraw/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
+
+
+%% Calculate Processed Position
+% Euler approx (LHS Reimann Sum Approx)
+
+% Angular Position experienced by arm
+theta_proc = [0]; % initial condition
+for i = 2:length(omega_proc)
+    theta_proc(i) = theta_proc(i-1) + (omega_proc(i-1)*dt); % (rads)
+end
+theta_proc = theta_proc/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
+
+% Angular Position experienced by motor
+theta_Mproc = [0];
+for i = 2:length(omega_Mproc)
+    theta_Mproc(i) = theta_Mproc(i-1) + (omega_Mproc(i-1)*dt); % (rads)
+end
+theta_Mproc = theta_Mproc/(2*pi); % change in terms of full rotations (ie 1 rot = 2*pi rads)
 
 %% ---------- Brake Flagging ---------- %%
 %% Find Braking Points
@@ -335,40 +327,41 @@ hold on
 grid on
 plot(t, omega_raw, "k", "linewidth", 2)
 plot(t, omega_proc, "r", "linewidth", 2)
-plot(t(brakes == 1), omega_proc(brakes == 1), ".b", "markersize", 10) 
+plot(t(brakes == 1), omega_proc(brakes == 1), ".b", "markersize", 10)
+plot(Manual(:, 1), Manual(:, 2), 'g', 'linewidth', 2)
 title("Arm: Angular Speed")
 xlabel("Time (s)")
 ylabel("\omega (rad/s)")
-legend("Original", "Processed", "Braking Section", "location", "north")
+legend("Original", "Processed", "Braking Section", 'Manual', "location", "north")
 
 figure(3); hold on; grid on;
-plot(t, omega_Mraw, 'k', 'linewidth', 2)  %Raw angular velocity
-plot(t, omega_Mproc, 'r', 'linewidth', 2) %processed angular velocity
-plot(Vec_trunk(:, 1), Vec_trunk(:, 2), 'g', 'linewidth', 2) %Truncated
+plot(t, omega_Mraw, 'k', 'linewidth', 2)
+plot(t, omega_Mproc, 'r', 'linewidth', 2)
+plot(Vec_trunk(:, 1), Vec_trunk(:, 2), 'c', 'linewidth', 2) %ASK IF OK
 title("Motor: Angular Speed")
 xlabel("Time (s)")
 ylabel("\omega (rad/s)")
-legend("Original", "Processed", "location", "north")
+legend("Original", "Processed", "Truncated", "location", "north")
 
 %% Original and Processed Angular Position
 
-% figure(4)
-% hold on
-% grid on
-% plot(t, theta_raw, "k", "linewidth", 2)
-% plot(t, theta_proc, "r", "linewidth", 2)
-% title("Arm: Angular Position")
-% xlabel("Time (s)")
-% ylabel("Position (rotations, 2\pi rads)")
-% legend("Original", "Processed", "location", "north")
-% 
-% figure(5); hold on; grid on;
-% plot(t, theta_Mraw, "k", "linewidth", 2)
-% plot(t, theta_Mproc, "r", "linewidth", 2)
-% title("Motor: Angular Position")
-% xlabel("Time (s)")
-% ylabel("Position (rotations, 2\pi rads)")
-% legend("Original", "Processed", "location", "north")
+figure(4)
+hold on
+grid on
+plot(t, theta_raw, "k", "linewidth", 2)
+plot(t, theta_proc, "r", "linewidth", 2)
+title("Arm: Angular Position")
+xlabel("Time (s)")
+ylabel("Position (rotations, 2\pi rads)")
+legend("Original", "Processed", "location", "north")
+
+figure(5); hold on; grid on;
+plot(t, theta_Mraw, "k", "linewidth", 2)
+plot(t, theta_Mproc, "r", "linewidth", 2)
+title("Motor: Angular Position")
+xlabel("Time (s)")
+ylabel("Position (rotations, 2\pi rads)")
+legend("Original", "Processed", "location", "north")
 
 % %sanity test
 % figure(6)
@@ -434,6 +427,7 @@ j_ang_rmse = rmse(j_ang_raw, j_ang_proc);
 
 % data format = [time (s), postion (rotations), angular speed (RPM), brake flag (0/1)]
 Data_Out = [t' theta_Mproc' omega_Mproc' brakes'];
+Data_Trunk_Out = [Vec_trunk(:, 1)' Vec_trunk(:, 2)'];
 %writematrix(Data_Out, "Processed_Profile.csv")
 
 %% Hard-coding Processed Profile to MotionProfile.cs
